@@ -74,7 +74,8 @@ const productRoutes = require('./routes/products');
 const userRoutes = require('./routes/users');
 const cartRoutes = require('./routes/cart');
 const orderRoutes = require('./routes/orders');
-
+// Serve static files from the 'public' folder
+app.use(express.static('public'));
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
