@@ -57,7 +57,8 @@ const upload = multer({
   fileFilter: fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }
 });
-
+// This tells Express to serve the static files in your 'public' folder
+app.use(express.static('public'));
 app.use('/api/products/upload', upload.single('image'));
 
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/tsa-ecommerce';
