@@ -15,7 +15,10 @@ const corsOptions = {
     : ['http://localhost:3000', 'http://localhost:5000'],
   credentials: true
 };
-
+// Add this to your server.js
+app.get('/', (req, res) => {
+  res.send('Welcome to the Time-Signal-Arabia API!');
+});
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
