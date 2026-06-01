@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-<<<<<<< HEAD
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
@@ -61,7 +60,4 @@ router.post('/:id/wishlist/:productId', async (req, res) => {
   }
 });
 
-=======
-router.get('/', (req, res) => res.send('Users route working')); // Change 'Users' to 'Cart' or 'Orders' for those files
->>>>>>> 770b92ed2522b88d558bfdc937308064dd67a604
 module.exports = router;
