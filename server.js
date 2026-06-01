@@ -15,12 +15,6 @@ const corsOptions = {
     : ['http://localhost:3000', 'http://localhost:5000'],
   credentials: true
 };
-<<<<<<< HEAD
-=======
-// Add this to your server.js
-
-  
->>>>>>> 770b92ed2522b88d558bfdc937308064dd67a604
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
@@ -60,12 +54,7 @@ const upload = multer({
   fileFilter: fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }
 });
-<<<<<<< HEAD
 
-=======
-// This tells Express to serve the static files in your 'public' folder
-app.use(express.static('public'));
->>>>>>> 770b92ed2522b88d558bfdc937308064dd67a604
 app.use('/api/products/upload', upload.single('image'));
 
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/tsa-ecommerce';
@@ -82,12 +71,7 @@ const productRoutes = require('./routes/products');
 const userRoutes = require('./routes/users');
 const cartRoutes = require('./routes/cart');
 const orderRoutes = require('./routes/orders');
-<<<<<<< HEAD
 
-=======
-// Serve static files from the 'public' folder
-app.use(express.static('public'));
->>>>>>> 770b92ed2522b88d558bfdc937308064dd67a604
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
@@ -97,7 +81,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running' });
 });
 
-<<<<<<< HEAD
 // SPA Fallback - serve index.html for all non-API routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -106,9 +89,3 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-=======
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-
->>>>>>> 770b92ed2522b88d558bfdc937308064dd67a604
