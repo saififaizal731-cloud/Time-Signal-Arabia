@@ -1,0 +1,33 @@
+{
+  "name": "tsa-time-signal-arabia",
+  "version": "1.0.0",
+  "description": "TSA Time Signal Arabia - Networking Products E-commerce Store",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "networking",
+    "ecommerce",
+    "saudi"
+  ],
+  "author": "TSA",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^7.2.0",
+    "mongoose": "^7.8.9",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
