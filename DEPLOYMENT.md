@@ -124,4 +124,8 @@ git push origin main
 # 6. Done! ✅
 ```
 
+<<<<<<< HEAD
 Your app will be live in minutes!
+=======
+Your app will be live in minutes!
+>>>>>>> 770b92ed2522b88d558bfdc937308064dd67a604

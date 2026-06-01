@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+<<<<<<< HEAD
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 
@@ -53,4 +54,7 @@ router.get('/order/:orderId', async (req, res) => {
   }
 });
 
+=======
+router.get('/', (req, res) => res.send('Users route working')); // Change 'Users' to 'Cart' or 'Orders' for those files
+>>>>>>> 770b92ed2522b88d558bfdc937308064dd67a604
 module.exports = router;
