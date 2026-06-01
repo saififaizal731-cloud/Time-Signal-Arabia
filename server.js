@@ -89,22 +89,4 @@ app.get('/api/health', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-const express = require('express');
-const path = require('path');
-const app = express();
 
-// 1. Tell the server to serve your static design files from the 'public' folder
-app.use(express.static(path.join(__dirname, 'public')));
-
-// [Your existing MongoDB connection or API routes stay here exactly as they are...]
-
-// 2. Point the root web request directly to your index.html interface
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Your app.listen configuration remains at the very bottom
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
