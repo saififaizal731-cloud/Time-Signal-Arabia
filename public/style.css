@@ -1136,6 +1136,8 @@ input[type="file"]:hover {
   font-weight: 500;
   text-align: center;
   user-select: none;
+  z-index: 10;
+  position: relative;
 }
 
 .upload-icon {
@@ -1148,15 +1150,19 @@ input[type="file"]:hover {
   color: #555;
 }
 
+.image-upload-btn:hover {
+  background-color: #fff3e0;
+}
+
 .image-upload-btn:hover span:last-child {
   color: #ff9f1c;
   font-weight: 600;
 }
 
 .image-preview-box {
+  display: none;
   min-height: 100%;
   width: 100%;
-  display: flex;
   align-items: center;
   justify-content: center;
   background-color: white;
@@ -1165,6 +1171,11 @@ input[type="file"]:hover {
   top: 0;
   left: 0;
   padding: 5px;
+  z-index: 5;
+}
+
+.image-preview-box.has-image {
+  display: flex;
 }
 
 .image-preview-box img {

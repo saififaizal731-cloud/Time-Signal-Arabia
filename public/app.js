@@ -785,13 +785,16 @@ function showAddProductForm() {
 function previewProductImage(slot) {
   const fileInput = document.getElementById(`imageFile${slot}`);
   const preview = document.getElementById(`preview${slot}`);
-  const uploadBtn = fileInput.nextElementSibling;
+  const uploadSlot = fileInput.closest('.image-upload-slot');
+  const uploadBtn = uploadSlot.querySelector('.image-upload-btn');
 
   if (fileInput.files && fileInput.files[0]) {
     const reader = new FileReader();
     reader.onload = function(e) {
       preview.innerHTML = `<img src="${e.target.result}" alt="Preview ${slot + 1}">`;
-      uploadBtn.style.display = 'none';
+      preview.classList.add('has-image');
+      uploadBtn.style.opacity = '0.3';
+      uploadBtn.style.pointerEvents = 'none';
     };
     reader.readAsDataURL(fileInput.files[0]);
   }
