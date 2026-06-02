@@ -699,29 +699,51 @@ function showAddProductForm() {
     <div class="admin-form-row full">
       <div>
         <label>Product Images (Max 5)</label>
-        <div id="imageUploadSlots" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 10px;">
-          <div class="image-upload-slot">
-            <input type="file" id="imageFile0" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(0)">
-            <div id="preview0" class="image-preview-box"></div>
+        <div id="imageUploadContainer" class="image-upload-container">
+          <div id="imageUploadSlots" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 20px;">
+            <div class="image-upload-slot">
+              <input type="file" id="imageFile0" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(0)" style="display: none;">
+              <label for="imageFile0" class="image-upload-btn">
+                <span class="upload-icon">📷</span>
+                <span>Upload Image 1</span>
+              </label>
+              <div id="preview0" class="image-preview-box"></div>
+            </div>
+            <div class="image-upload-slot">
+              <input type="file" id="imageFile1" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(1)" style="display: none;">
+              <label for="imageFile1" class="image-upload-btn">
+                <span class="upload-icon">📷</span>
+                <span>Upload Image 2</span>
+              </label>
+              <div id="preview1" class="image-preview-box"></div>
+            </div>
+            <div class="image-upload-slot">
+              <input type="file" id="imageFile2" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(2)" style="display: none;">
+              <label for="imageFile2" class="image-upload-btn">
+                <span class="upload-icon">📷</span>
+                <span>Upload Image 3</span>
+              </label>
+              <div id="preview2" class="image-preview-box"></div>
+            </div>
+            <div class="image-upload-slot">
+              <input type="file" id="imageFile3" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(3)" style="display: none;">
+              <label for="imageFile3" class="image-upload-btn">
+                <span class="upload-icon">📷</span>
+                <span>Upload Image 4</span>
+              </label>
+              <div id="preview3" class="image-preview-box"></div>
+            </div>
+            <div class="image-upload-slot">
+              <input type="file" id="imageFile4" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(4)" style="display: none;">
+              <label for="imageFile4" class="image-upload-btn">
+                <span class="upload-icon">📷</span>
+                <span>Upload Image 5</span>
+              </label>
+              <div id="preview4" class="image-preview-box"></div>
+            </div>
           </div>
-          <div class="image-upload-slot">
-            <input type="file" id="imageFile1" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(1)">
-            <div id="preview1" class="image-preview-box"></div>
-          </div>
-          <div class="image-upload-slot">
-            <input type="file" id="imageFile2" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(2)">
-            <div id="preview2" class="image-preview-box"></div>
-          </div>
-          <div class="image-upload-slot">
-            <input type="file" id="imageFile3" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(3)">
-            <div id="preview3" class="image-preview-box"></div>
-          </div>
-          <div class="image-upload-slot">
-            <input type="file" id="imageFile4" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(4)">
-            <div id="preview4" class="image-preview-box"></div>
-          </div>
+          <div id="uploadStatus" style="margin-top: 20px; font-size: 14px; text-align: center; font-weight: 500;"></div>
         </div>
-        <div id="uploadStatus" style="margin-top: 10px; font-size: 12px;"></div>
       </div>
     </div>
 
@@ -763,11 +785,13 @@ function showAddProductForm() {
 function previewProductImage(slot) {
   const fileInput = document.getElementById(`imageFile${slot}`);
   const preview = document.getElementById(`preview${slot}`);
+  const uploadBtn = fileInput.nextElementSibling;
 
   if (fileInput.files && fileInput.files[0]) {
     const reader = new FileReader();
     reader.onload = function(e) {
-      preview.innerHTML = `<img src="${e.target.result}" alt="Preview ${slot + 1}" style="max-width: 100%; max-height: 150px; object-fit: cover; border-radius: 5px;">`;
+      preview.innerHTML = `<img src="${e.target.result}" alt="Preview ${slot + 1}">`;
+      uploadBtn.style.display = 'none';
     };
     reader.readAsDataURL(fileInput.files[0]);
   }
