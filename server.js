@@ -55,7 +55,7 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-app.use('/api/products/upload', upload.single('image'));
+app.use('/api/products/upload', upload.array('images', 5));
 
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/tsa-ecommerce';
 const PORT = process.env.PORT || 5000;

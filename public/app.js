@@ -34,10 +34,12 @@ function displayProducts(products) {
     return;
   }
 
-  grid.innerHTML = products.map(product => `
+  grid.innerHTML = products.map(product => {
+    const imageUrl = product.images && product.images.length > 0 ? product.images[0] : (product.image || 'https://via.placeholder.com/300x200?text=' + encodeURIComponent(product.name));
+    return `
     <div class="product-card">
       <div class="product-image">
-        <img src="${product.image || 'https://via.placeholder.com/300x200?text=' + encodeURIComponent(product.name)}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/300x200?text=' + encodeURIComponent('${product.name}')">
+        <img src="${imageUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/300x200?text=' + encodeURIComponent('${product.name}')">
         ${product.bestseller ? '<span class="product-badge">Best Seller</span>' : ''}
         ${product.featured ? '<span class="product-badge">Featured</span>' : ''}
       </div>
@@ -54,7 +56,8 @@ function displayProducts(products) {
         </div>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 // View Product Details
@@ -64,11 +67,20 @@ async function viewProduct(productId) {
     const response = await fetch(`${API_BASE}/products/${productId}`);
     const product = await response.json();
 
+    const imageUrl = product.images && product.images.length > 0 ? product.images[0] : (product.image || `https://via.placeholder.com/400x300?text=${encodeURIComponent(product.name)}`);
     const detailImageEl = document.getElementById('detailImage');
-    detailImageEl.src = product.image || `https://via.placeholder.com/400x300?text=${encodeURIComponent(product.name)}`;
+    detailImageEl.src = imageUrl;
     detailImageEl.onerror = function() {
       this.src = `https://via.placeholder.com/400x300?text=${encodeURIComponent(product.name)}`;
     };
+
+    // Setup image gallery if multiple images exist
+    const imageGallery = document.getElementById('imageGallery');
+    if (imageGallery && product.images && product.images.length > 1) {
+      imageGallery.innerHTML = product.images.map((img, idx) =>
+        `<img src="${img}" alt="Image ${idx + 1}" class="thumbnail" onclick="changeDetailImage('${img}')" style="cursor: pointer; width: 60px; height: 60px; margin: 5px; border: 2px solid transparent; border-radius: 4px; object-fit: cover;" onmouseover="this.style.borderColor='#007bff'" onmouseout="this.style.borderColor='transparent'">`
+      ).join('');
+    }
     document.getElementById('detailName').textContent = product.name;
     document.getElementById('detailPrice').textContent = `${product.price} SAR`;
     document.getElementById('detailBrand').textContent = `Brand: ${product.brand || 'N/A'}`;
@@ -497,6 +509,11 @@ function searchProducts() {
   }
 }
 
+// Change detail image in gallery
+function changeDetailImage(imageUrl) {
+  document.getElementById('detailImage').src = imageUrl;
+}
+
 // Modal Controls
 function closeModal() {
   document.getElementById('productModal').style.display = 'none';
@@ -681,40 +698,32 @@ function showAddProductForm() {
 
     <div class="admin-form-row full">
       <div>
-        <label>Product Image</label>
-        <div style="margin-bottom: 10px;">
-          <input type="radio" name="imageOption" id="imageOptionUrl" value="url" checked>
-          <label for="imageOptionUrl" style="font-weight: normal; margin-left: 5px;">Image URL</label>
-
-          <input type="radio" name="imageOption" id="imageOptionUpload" value="upload" style="margin-left: 20px;">
-          <label for="imageOptionUpload" style="font-weight: normal; margin-left: 5px;">Upload Image</label>
+        <label>Product Images (Max 5)</label>
+        <div id="imageUploadSlots" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 10px;">
+          <div class="image-upload-slot">
+            <input type="file" id="imageFile0" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(0)">
+            <div id="preview0" class="image-preview-box"></div>
+          </div>
+          <div class="image-upload-slot">
+            <input type="file" id="imageFile1" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(1)">
+            <div id="preview1" class="image-preview-box"></div>
+          </div>
+          <div class="image-upload-slot">
+            <input type="file" id="imageFile2" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(2)">
+            <div id="preview2" class="image-preview-box"></div>
+          </div>
+          <div class="image-upload-slot">
+            <input type="file" id="imageFile3" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(3)">
+            <div id="preview3" class="image-preview-box"></div>
+          </div>
+          <div class="image-upload-slot">
+            <input type="file" id="imageFile4" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="previewProductImage(4)">
+            <div id="preview4" class="image-preview-box"></div>
+          </div>
         </div>
-
-        <div id="imageUrlSection">
-          <input type="url" id="productImageUrl" placeholder="https://example.com/image.jpg">
-        </div>
-
-        <div id="imageUploadSection" style="display: none;">
-          <input type="file" id="productImageUpload" accept="image/jpeg,image/jpg,image/png,image/webp">
-          <div id="uploadPreview" style="margin-top: 10px;"></div>
-          <div id="uploadStatus" style="margin-top: 5px; font-size: 12px;"></div>
-        </div>
+        <div id="uploadStatus" style="margin-top: 10px; font-size: 12px;"></div>
       </div>
     </div>
-
-    <script>
-      document.querySelectorAll('input[name="imageOption"]').forEach(radio => {
-        radio.addEventListener('change', (e) => {
-          if (e.target.value === 'url') {
-            document.getElementById('imageUrlSection').style.display = 'block';
-            document.getElementById('imageUploadSection').style.display = 'none';
-          } else {
-            document.getElementById('imageUrlSection').style.display = 'none';
-            document.getElementById('imageUploadSection').style.display = 'block';
-          }
-        });
-      });
-    </script>
 
     <div class="admin-form-row full">
       <div>
@@ -750,52 +759,69 @@ function showAddProductForm() {
   document.getElementById('adminContent').innerHTML = html;
 }
 
-// Image upload handler
-async function uploadProductImage(fileInputId, statusDivId, previewDivId) {
-  const fileInput = document.getElementById(fileInputId);
-  const statusDiv = document.getElementById(statusDivId);
-  const previewDiv = document.getElementById(previewDivId);
+// Preview product image in slot
+function previewProductImage(slot) {
+  const fileInput = document.getElementById(`imageFile${slot}`);
+  const preview = document.getElementById(`preview${slot}`);
 
-  if (!fileInput || !fileInput.files || !fileInput.files[0]) {
-    return null;
+  if (fileInput.files && fileInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      preview.innerHTML = `<img src="${e.target.result}" alt="Preview ${slot + 1}" style="max-width: 100%; max-height: 150px; object-fit: cover; border-radius: 5px;">`;
+    };
+    reader.readAsDataURL(fileInput.files[0]);
   }
+}
 
-  const file = fileInput.files[0];
+// Upload all product images
+async function uploadAllProductImages() {
+  const uploadedImages = [];
+  const statusDiv = document.getElementById('uploadStatus');
 
-  if (file.size > 5 * 1024 * 1024) {
-    statusDiv.innerHTML = '<span style="color: #ff4444;">File too large (max 5MB)</span>';
-    return null;
-  }
+  statusDiv.innerHTML = '<span style="color: #0052cc;">⏳ Uploading images...</span>';
 
-  const formData = new FormData();
-  formData.append('image', file);
+  for (let i = 0; i < 5; i++) {
+    const fileInput = document.getElementById(`imageFile${i}`);
 
-  statusDiv.innerHTML = '<span style="color: #0052cc;">⏳ Uploading...</span>';
+    if (fileInput && fileInput.files && fileInput.files[0]) {
+      const file = fileInput.files[0];
 
-  try {
-    const response = await fetch(`${API_BASE}/products/upload`, {
-      method: 'POST',
-      body: formData
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      statusDiv.innerHTML = '<span style="color: #28a745;">✓ Uploaded successfully</span>';
-
-      if (previewDiv) {
-        previewDiv.innerHTML = `<img src="${data.imageUrl}" style="max-width: 150px; border: 1px solid #ddd; border-radius: 4px;">`;
+      if (file.size > 5 * 1024 * 1024) {
+        statusDiv.innerHTML = `<span style="color: #ff4444;">✗ Image ${i + 1} too large (max 5MB)</span>`;
+        return null;
       }
 
-      return data.imageUrl;
-    } else {
-      statusDiv.innerHTML = '<span style="color: #ff4444;">✗ Upload failed</span>';
-      return null;
+      const formData = new FormData();
+      formData.append('images', file);
+
+      try {
+        const response = await fetch(`${API_BASE}/products/upload`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          uploadedImages.push(...data.imageUrls);
+        } else {
+          statusDiv.innerHTML = `<span style="color: #ff4444;">✗ Failed to upload image ${i + 1}</span>`;
+          return null;
+        }
+      } catch (error) {
+        console.error(`Error uploading image ${i + 1}:`, error);
+        statusDiv.innerHTML = `<span style="color: #ff4444;">✗ Upload error on image ${i + 1}</span>`;
+        return null;
+      }
     }
-  } catch (error) {
-    console.error('Upload error:', error);
-    statusDiv.innerHTML = '<span style="color: #ff4444;">✗ Upload error</span>';
-    return null;
   }
+
+  if (uploadedImages.length > 0) {
+    statusDiv.innerHTML = `<span style="color: #28a745;">✓ ${uploadedImages.length} image(s) uploaded successfully</span>`;
+    window.uploadedProductImages = uploadedImages;
+    return uploadedImages;
+  }
+
+  return [];
 }
 
 async function createProduct(event) {
@@ -828,19 +854,15 @@ async function createProduct(event) {
   const featured = document.getElementById('productFeatured').checked;
   const bestseller = document.getElementById('productBestseller').checked;
 
-  // Handle image
-  let imageUrl = '';
-  const imageOption = document.querySelector('input[name="imageOption"]:checked');
-  if (imageOption && imageOption.value === 'upload') {
-    const uploadedUrl = await uploadProductImage('productImageUpload', 'uploadStatus', 'uploadPreview');
-    if (!uploadedUrl) {
-      alert('Please upload an image or select URL option');
-      return;
-    }
-    imageUrl = uploadedUrl;
-  } else {
-    const urlInput = document.getElementById('productImageUrl');
-    imageUrl = urlInput ? urlInput.value : '';
+  // Upload images
+  const uploadedImages = await uploadAllProductImages();
+  if (uploadedImages === null) {
+    return;
+  }
+
+  if (uploadedImages.length === 0) {
+    alert('Please upload at least one product image');
+    return;
   }
 
   let specifications = {};
@@ -869,7 +891,8 @@ async function createProduct(event) {
     stock,
     brand,
     rating,
-    image: imageUrl,
+    image: uploadedImages[0],
+    images: uploadedImages,
     description,
     specifications,
     featured,

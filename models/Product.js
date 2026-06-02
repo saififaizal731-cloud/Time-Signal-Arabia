@@ -28,6 +28,16 @@ const productSchema = new mongoose.Schema({
   description: String,
   specifications: mongoose.Schema.Types.Mixed,
   image: String,
+  images: {
+    type: [String],
+    default: [],
+    validate: {
+      validator: function(arr) {
+        return arr.length <= 5;
+      },
+      message: 'Maximum 5 images allowed per product'
+    }
+  },
   brand: String,
   stock: {
     type: Number,

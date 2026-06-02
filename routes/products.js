@@ -6,12 +6,16 @@ const cheerio = require('cheerio');
 
 router.post('/upload', (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: 'No files uploaded' });
     }
 
-    const imageUrl = '/uploads/' + req.file.filename;
-    res.json({ imageUrl: imageUrl, filename: req.file.filename });
+    if (req.files.length > 5) {
+      return res.status(400).json({ message: 'Maximum 5 images allowed' });
+    }
+
+    const imageUrls = req.files.map(file => `/uploads/${file.filename}`);
+    res.json({ imageUrls: imageUrls, filenames: req.files.map(f => f.filename) });
 
   } catch (error) {
     console.error('Upload error:', error);
