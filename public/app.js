@@ -381,8 +381,9 @@ async function handleLogin(event) {
       body: JSON.stringify({ email, password }),
     });
 
-    if (response.ok) {
-      const data = await response.json();
+    const data = await response.json();
+
+    if (response.status === 200 && data.user) {
       currentUser = data.user;
       localStorage.setItem('token', data.token);
       loadCart();
@@ -390,10 +391,11 @@ async function handleLogin(event) {
       alert('Logged in successfully!');
       closeAccountModal();
     } else {
-      alert('Invalid email or password');
+      alert(data.message || 'Invalid email or password');
     }
   } catch (error) {
     console.error('Error:', error);
+    alert('Error logging in. Please try again.');
   }
 }
 
