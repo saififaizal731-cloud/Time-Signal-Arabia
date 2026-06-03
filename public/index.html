@@ -1,14 +1,373 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>homepage</title>
-    <script type="module" crossorigin src="/assets/index-BjRutaHp.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CBOHimsC.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TSA Time Signal Arabia - Networking Products</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="container">
+        <div class="nav-content">
+          <div class="logo">
+            <img src="/images/logo.png" alt="TSA Logo" class="logo-img">
+            <div class="logo-text">
+              <h1>TSA Time Signal Arabia</h1>
+              <p class="tagline">Quality Networking Solutions</p>
+            </div>
+          </div>
+
+          <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search networking products...">
+            <button onclick="searchProducts()">Search</button>
+          </div>
+
+          <div class="nav-links">
+            <a href="#" class="lang-toggle" onclick="toggleLanguage()">EN | AR</a>
+            <a href="#wishlist" class="icon-link">❤️ Wishlist</a>
+            <a href="#cart" class="icon-link" onclick="openCart()">🛒 Cart <span id="cartCount" class="badge">0</span></a>
+            <a href="#account" class="icon-link" onclick="openAccount()">👤 Account</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="categories-menu">
+      <div class="container">
+        <button class="category-btn" onclick="filterByCategory('all')">All Products</button>
+        <button class="category-btn" onclick="filterByCategory('Network Switches')">Network Switches</button>
+        <button class="category-btn" onclick="filterByCategory('Routers & Gateways')">Routers</button>
+        <button class="category-btn" onclick="filterByCategory('Network Cables')">Cables</button>
+        <button class="category-btn" onclick="filterByCategory('Wireless Access Points')">WiFi</button>
+        <button class="category-btn" onclick="filterByCategory('Network Storage')">Storage</button>
+        <button class="category-btn" onclick="filterByCategory('Networking Tools')">Tools</button>
+        <button class="category-btn" onclick="filterByCategory('Security & Firewalls')">Security</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h2>Welcome to TSA Time Signal Arabia</h2>
+        <p>Your Trusted Networking Solutions Partner</p>
+        <p class="location">📍 Qurban Street, Madinah, Saudi Arabia</p>
+        <button class="cta-btn" onclick="scrollToProducts()">Shop Now</button>
+      </div>
+    </section>
+
+    <!-- Promo Banner -->
+    <section class="promo-banner">
+      <p>🚚 FREE SHIPPING in Madinah | Quality Guaranteed | Established Trusted Partner</p>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters">
+      <div class="container">
+        <div class="filter-group">
+          <label>Sort By:</label>
+          <select id="sortSelect" onchange="sortProducts(this.value)">
+            <option value="">All</option>
+            <option value="featured">Featured</option>
+            <option value="bestseller">Best Sellers</option>
+            <option value="newest">New Arrivals</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Top Rated</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Price Range:</label>
+          <input type="range" id="priceRange" min="0" max="10000" step="100" onchange="filterByPrice(this.value)">
+          <span id="priceDisplay">0 - 10,000 SAR</span>
+        </div>
+
+        <div class="filter-group">
+          <label>Brand:</label>
+          <input type="text" id="brandFilter" placeholder="Enter brand..." onchange="filterByBrand(this.value)">
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section">
+      <div class="container">
+        <div class="products-grid" id="productsGrid">
+          <!-- Products will be loaded here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust Section -->
+    <section class="trust-section">
+      <div class="container">
+        <div class="trust-cards">
+          <div class="trust-card">
+            <h3>✓ Quality Guaranteed</h3>
+            <p>All products are genuine and tested</p>
+          </div>
+          <div class="trust-card">
+            <h3>✓ Fast Shipping</h3>
+            <p>Quick delivery to Madinah and Saudi Arabia</p>
+          </div>
+          <div class="trust-card">
+            <h3>✓ Expert Support</h3>
+            <p>Technical support available 24/7</p>
+          </div>
+          <div class="trust-card">
+            <h3>✓ Easy Returns</h3>
+            <p>30-day return policy</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modals -->
+  <div id="productModal" class="modal" style="display: none;">
+    <div class="modal-content product-detail-professional">
+      <div class="product-modal-header">
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+
+      <div class="product-main-container">
+        <!-- LEFT: Product Image Section -->
+        <div class="product-image-section">
+          <div class="main-image-container">
+            <img id="detailImage" src="" alt="Product Image">
+          </div>
+          <div id="imageGallery" class="image-gallery"></div>
+        </div>
+
+        <!-- RIGHT: Product Information Section -->
+        <div class="product-info-section">
+          <!-- Brand and Title -->
+          <div class="product-header-info">
+            <p id="detailBrand" class="brand-name"></p>
+            <h1 id="detailName" class="product-title"></h1>
+            <p id="detailCategory" class="product-category"></p>
+          </div>
+
+          <!-- Rating and Reviews -->
+          <div class="product-rating-section">
+            <span id="detailRating" class="rating-display"></span>
+          </div>
+
+          <!-- Stock Status -->
+          <div id="detailStock" class="stock-badge"></div>
+
+          <!-- Price Section -->
+          <div class="price-section">
+            <div class="price-breakdown">
+              <div class="price-line">
+                <span class="price-label">Product Price:</span>
+                <span id="productPriceDisplay" class="price-value">0 SAR</span>
+              </div>
+              <div class="price-line">
+                <span class="price-label">Tax (15%):</span>
+                <span id="productTaxDisplay" class="price-value">0 SAR</span>
+              </div>
+              <div class="price-line total">
+                <span class="price-label">Total:</span>
+                <span id="detailPrice" class="total-price">0 SAR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quantity Selector -->
+          <div class="quantity-section">
+            <label class="quantity-label">Quantity:</label>
+            <div class="quantity-selector-professional">
+              <button class="qty-btn" onclick="decrementQuantity()">−</button>
+              <input type="number" id="quantityInput" min="1" value="1" class="qty-input" readonly>
+              <button class="qty-btn" onclick="incrementQuantity()">+</button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button class="btn btn-add-cart" onclick="addToCart()">🛒 Add to Cart</button>
+            <button class="btn btn-wishlist" onclick="addToWishlist()">❤️ Add to Wishlist</button>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="trust-badges">
+            <div class="badge-item">
+              <span class="badge-icon">🚚</span>
+              <span class="badge-text">Free Shipping</span>
+            </div>
+            <div class="badge-item">
+              <span class="badge-icon">↩️</span>
+              <span class="badge-text">30-Day Returns</span>
+            </div>
+            <div class="badge-item">
+              <span class="badge-icon">🛡️</span>
+              <span class="badge-text">Warranty</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs Section -->
+      <div class="product-tabs-section">
+        <div class="tabs-nav">
+          <button class="tab-button active" onclick="switchProductTab('description')">Description</button>
+          <button class="tab-button" onclick="switchProductTab('specifications')">Specifications</button>
+          <button class="tab-button" onclick="switchProductTab('reviews')">Reviews</button>
+        </div>
+
+        <div class="tabs-content">
+          <!-- Description Tab -->
+          <div id="tab-description" class="tab-pane active">
+            <div id="detailDescription" class="description"></div>
+          </div>
+
+          <!-- Specifications Tab -->
+          <div id="tab-specifications" class="tab-pane">
+            <div id="detailSpecs" class="specifications-table"></div>
+          </div>
+
+          <!-- Reviews Tab -->
+          <div id="tab-reviews" class="tab-pane">
+            <div class="reviews-section">
+              <p class="no-reviews">No reviews yet. Be the first to review this product!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Products Section -->
+      <div class="related-products-section">
+        <h3>Related Products</h3>
+        <div id="relatedProductsContainer" class="related-products-grid">
+          <!-- Related products will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Modal -->
+  <div id="cartModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close" onclick="closeCartModal()">&times;</span>
+      <h2>Shopping Cart</h2>
+      <div id="cartItems" class="cart-items">
+        <!-- Cart items will be loaded here -->
+      </div>
+      <div class="cart-summary">
+        <h3>Total: <span id="cartTotal">0</span> SAR</h3>
+      </div>
+      <div class="cart-actions">
+        <button class="btn btn-primary" onclick="checkout()">Proceed to Checkout</button>
+        <button class="btn btn-secondary" onclick="closeCartModal()">Continue Shopping</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Account Modal -->
+  <div id="accountModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close" onclick="closeAccountModal()">&times;</span>
+      <h2>Account</h2>
+      <div id="accountContent">
+        <!-- Account content will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div id="checkoutModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close" onclick="closeCheckoutModal()">&times;</span>
+      <h2>Checkout</h2>
+      <form onsubmit="placeOrder(event)">
+        <div class="form-group">
+          <label>Shipping Address:</label>
+          <textarea id="shippingAddress" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Phone Number:</label>
+          <input type="tel" id="phoneNumber" required>
+        </div>
+        <div class="form-group">
+          <h3>Order Summary</h3>
+          <p id="checkoutTotal"></p>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Place Order</button>
+          <button type="button" class="btn btn-secondary" onclick="closeCheckoutModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Panel Modal -->
+  <div id="adminModal" class="modal" style="display: none;">
+    <div class="modal-content admin-panel">
+      <span class="close" onclick="closeAdminModal()">&times;</span>
+      <h2>⚙️ Admin Panel - Product Management</h2>
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" onclick="showAdminTab('products')">All Products</button>
+        <button class="admin-tab-btn" onclick="showAdminTab('add')">Add New Product</button>
+        <button class="admin-tab-btn" onclick="showAdminTab('scrape')">Paste Product URL</button>
+      </div>
+      <div id="adminContent">
+        <!-- Dynamic content loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>TSA Time Signal Arabia</h3>
+          <p>📍 Qurban Street, Madinah, Saudi Arabia</p>
+          <p>📞 Phone: 0560826709</p>
+          <p>📧 Email: info@aldiyafainfo.com</p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#shipping">Shipping Info</a></li>
+            <li><a href="#returns">Return Policy</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Product Categories</h3>
+          <ul>
+            <li><a href="#">Network Switches</a></li>
+            <li><a href="#">Routers & Gateways</a></li>
+            <li><a href="#">Network Cables</a></li>
+            <li><a href="#">Wireless Access Points</a></li>
+            <li><a href="#">More Categories</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Newsletter</h3>
+          <p>Subscribe for updates and exclusive offers</p>
+          <input type="email" placeholder="Enter your email" id="newsletterEmail">
+          <button onclick="subscribeNewsletter()">Subscribe</button>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2024 TSA Time Signal Arabia. All rights reserved.</p>
+        <p>Secure Shopping | Quality Guaranteed | Free Shipping in Madinah</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
 </html>
