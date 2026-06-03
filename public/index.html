@@ -49,13 +49,66 @@
   </header>
 
   <main>
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-content">
-        <h2>Welcome to TSA Time Signal Arabia</h2>
-        <p>Your Trusted Networking Solutions Partner</p>
-        <p class="location">📍 Qurban Street, Madinah, Saudi Arabia</p>
-        <button class="cta-btn" onclick="scrollToProducts()">Shop Now</button>
+    <!-- Cinematic Hero Section with Video Background -->
+    <section class="hero-cinematic">
+      <!-- Video Background -->
+      <video
+        class="hero-video"
+        autoplay
+        loop
+        muted
+        playsinline
+        preload="metadata">
+        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4" type="video/mp4">
+      </video>
+
+      <!-- Content Overlay -->
+      <div class="hero-overlay">
+        <!-- Glassmorphic Navigation -->
+        <nav class="hero-nav">
+          <div class="nav-container">
+            <!-- Logo -->
+            <div class="nav-logo">
+              <img src="/images/logo.png" alt="TSA Logo" class="logo-img">
+              <div class="logo-text">
+                <h1>TSA<sup class="text-xs">®</sup></h1>
+                <p class="tagline">Time Signal Arabia</p>
+              </div>
+            </div>
+
+            <!-- Nav Links -->
+            <div class="nav-links">
+              <a href="#home" class="nav-link active">Home</a>
+              <a href="#products" class="nav-link">Products</a>
+              <a href="#about" class="nav-link">About</a>
+              <a href="#contact" class="nav-link">Contact</a>
+            </div>
+
+            <!-- CTA Button -->
+            <button class="nav-cta liquid-glass" onclick="scrollToProducts()">
+              Begin Journey
+            </button>
+          </div>
+        </nav>
+
+        <!-- Hero Content -->
+        <div class="hero-content-cinematic">
+          <h2 class="hero-title animate-fade-rise">
+            Welcome to <em class="text-muted">TSA</em> Time Signal Arabia
+          </h2>
+
+          <p class="hero-subtitle animate-fade-rise-delay">
+            Your Trusted Networking Solutions Partner
+          </p>
+
+          <p class="hero-location animate-fade-rise-delay-2">
+            📍 Qurban Street, Madinah, Saudi Arabia
+          </p>
+
+          <button class="hero-cta liquid-glass animate-fade-rise-delay-2" onclick="scrollToProducts()">
+            Start Shopping
+          </button>
+        </div>
       </div>
     </section>
 
