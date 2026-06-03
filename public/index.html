@@ -129,32 +129,122 @@
 
   <!-- Modals -->
   <div id="productModal" class="modal" style="display: none;">
-    <div class="modal-content product-detail">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <div class="product-detail-content">
-        <div class="detail-image">
-          <img id="detailImage" src="" alt="">
-          <div id="imageGallery" style="display: flex; flex-wrap: wrap; margin-top: 10px; gap: 5px;"></div>
+    <div class="modal-content product-detail-professional">
+      <div class="product-modal-header">
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+
+      <div class="product-main-container">
+        <!-- LEFT: Product Image Section -->
+        <div class="product-image-section">
+          <div class="main-image-container">
+            <img id="detailImage" src="" alt="Product Image">
+          </div>
+          <div id="imageGallery" class="image-gallery"></div>
         </div>
-        <div class="detail-info">
-          <h2 id="detailName"></h2>
-          <div class="detail-rating">
-            <span id="detailRating"></span>
+
+        <!-- RIGHT: Product Information Section -->
+        <div class="product-info-section">
+          <!-- Brand and Title -->
+          <div class="product-header-info">
+            <p id="detailBrand" class="brand-name"></p>
+            <h1 id="detailName" class="product-title"></h1>
+            <p id="detailCategory" class="product-category"></p>
           </div>
-          <p id="detailPrice" class="price"></p>
-          <p id="detailBrand" class="brand"></p>
-          <p id="detailCategory" class="category"></p>
-          <div id="detailSpecs" class="specifications"></div>
-          <div id="detailStock" class="stock-status"></div>
-          <div class="quantity-selector">
-            <label>Quantity:</label>
-            <input type="number" id="quantityInput" min="1" value="1">
+
+          <!-- Rating and Reviews -->
+          <div class="product-rating-section">
+            <span id="detailRating" class="rating-display"></span>
           </div>
-          <div class="detail-actions">
-            <button class="btn btn-primary" onclick="addToCart()">Add to Cart</button>
-            <button class="btn btn-secondary" onclick="addToWishlist()">Add to Wishlist</button>
+
+          <!-- Stock Status -->
+          <div id="detailStock" class="stock-badge"></div>
+
+          <!-- Price Section -->
+          <div class="price-section">
+            <div class="price-breakdown">
+              <div class="price-line">
+                <span class="price-label">Product Price:</span>
+                <span id="productPriceDisplay" class="price-value">0 SAR</span>
+              </div>
+              <div class="price-line">
+                <span class="price-label">Tax (15%):</span>
+                <span id="productTaxDisplay" class="price-value">0 SAR</span>
+              </div>
+              <div class="price-line total">
+                <span class="price-label">Total:</span>
+                <span id="detailPrice" class="total-price">0 SAR</span>
+              </div>
+            </div>
           </div>
-          <div id="detailDescription" class="description"></div>
+
+          <!-- Quantity Selector -->
+          <div class="quantity-section">
+            <label class="quantity-label">Quantity:</label>
+            <div class="quantity-selector-professional">
+              <button class="qty-btn" onclick="decrementQuantity()">−</button>
+              <input type="number" id="quantityInput" min="1" value="1" class="qty-input" readonly>
+              <button class="qty-btn" onclick="incrementQuantity()">+</button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button class="btn btn-add-cart" onclick="addToCart()">🛒 Add to Cart</button>
+            <button class="btn btn-wishlist" onclick="addToWishlist()">❤️ Add to Wishlist</button>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="trust-badges">
+            <div class="badge-item">
+              <span class="badge-icon">🚚</span>
+              <span class="badge-text">Free Shipping</span>
+            </div>
+            <div class="badge-item">
+              <span class="badge-icon">↩️</span>
+              <span class="badge-text">30-Day Returns</span>
+            </div>
+            <div class="badge-item">
+              <span class="badge-icon">🛡️</span>
+              <span class="badge-text">Warranty</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs Section -->
+      <div class="product-tabs-section">
+        <div class="tabs-nav">
+          <button class="tab-button active" onclick="switchProductTab('description')">Description</button>
+          <button class="tab-button" onclick="switchProductTab('specifications')">Specifications</button>
+          <button class="tab-button" onclick="switchProductTab('reviews')">Reviews</button>
+        </div>
+
+        <div class="tabs-content">
+          <!-- Description Tab -->
+          <div id="tab-description" class="tab-pane active">
+            <div id="detailDescription" class="description"></div>
+          </div>
+
+          <!-- Specifications Tab -->
+          <div id="tab-specifications" class="tab-pane">
+            <div id="detailSpecs" class="specifications-table"></div>
+          </div>
+
+          <!-- Reviews Tab -->
+          <div id="tab-reviews" class="tab-pane">
+            <div class="reviews-section">
+              <p class="no-reviews">No reviews yet. Be the first to review this product!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Products Section -->
+      <div class="related-products-section">
+        <h3>Related Products</h3>
+        <div id="relatedProductsContainer" class="related-products-grid">
+          <!-- Related products will be loaded here -->
         </div>
       </div>
     </div>

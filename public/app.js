@@ -67,51 +67,85 @@ async function viewProduct(productId) {
     const response = await fetch(`${API_BASE}/products/${productId}`);
     const product = await response.json();
 
-    const imageUrl = product.images && product.images.length > 0 ? product.images[0] : (product.image || `https://via.placeholder.com/400x300?text=${encodeURIComponent(product.name)}`);
+    // Set main image
+    const imageUrl = product.images && product.images.length > 0 ? product.images[0] : (product.image || `https://via.placeholder.com/500x554?text=${encodeURIComponent(product.name)}`);
     const detailImageEl = document.getElementById('detailImage');
     detailImageEl.src = imageUrl;
     detailImageEl.onerror = function() {
-      this.src = `https://via.placeholder.com/400x300?text=${encodeURIComponent(product.name)}`;
+      this.src = `https://via.placeholder.com/500x554?text=${encodeURIComponent(product.name)}`;
     };
 
-    // Setup image gallery if multiple images exist
+    // Setup image gallery with thumbnails
     const imageGallery = document.getElementById('imageGallery');
     if (imageGallery && product.images && product.images.length > 1) {
       imageGallery.innerHTML = product.images.map((img, idx) =>
-        `<img src="${img}" alt="Image ${idx + 1}" class="thumbnail" onclick="changeDetailImage('${img}')" style="cursor: pointer; width: 60px; height: 60px; margin: 5px; border: 2px solid transparent; border-radius: 4px; object-fit: cover;" onmouseover="this.style.borderColor='#007bff'" onmouseout="this.style.borderColor='transparent'">`
+        `<img src="${img}" alt="Image ${idx + 1}" class="gallery-thumbnail" onclick="changeDetailImage('${img}')" title="Image ${idx + 1}">`
       ).join('');
+    } else if (imageGallery) {
+      imageGallery.innerHTML = '';
     }
+
+    // Product Header Info
     document.getElementById('detailName').textContent = product.name;
-    document.getElementById('detailPrice').textContent = `${product.price} SAR`;
-    document.getElementById('detailBrand').textContent = `Brand: ${product.brand || 'N/A'}`;
+    document.getElementById('detailBrand').textContent = `${product.brand || 'Unknown Brand'}`;
     document.getElementById('detailCategory').textContent = `Category: ${product.category}`;
-    document.getElementById('detailRating').textContent = `★ ${product.rating ? product.rating.toFixed(1) : 'N/A'} Rating`;
 
-    let specsHtml = '<strong>Specifications:</strong><ul>';
-    if (product.specifications) {
-      Object.entries(product.specifications).forEach(([key, value]) => {
-        specsHtml += `<li><strong>${key}:</strong> ${value}</li>`;
-      });
-    }
-    specsHtml += '</ul>';
-    document.getElementById('detailSpecs').innerHTML = specsHtml;
+    // Rating
+    document.getElementById('detailRating').textContent = `★ ${product.rating ? product.rating.toFixed(1) : 'N/A'} / 5.0 Rating`;
 
+    // Price Calculation (15% tax)
+    const tax = product.price * 0.15;
+    const total = product.price + tax;
+    document.getElementById('productPriceDisplay').textContent = `${product.price.toFixed(2)} SAR`;
+    document.getElementById('productTaxDisplay').textContent = `${tax.toFixed(2)} SAR`;
+    document.getElementById('detailPrice').textContent = `${total.toFixed(2)} SAR`;
+
+    // Stock Status
     const stockDiv = document.getElementById('detailStock');
     if (product.stock > 0) {
-      stockDiv.className = 'stock-status in-stock';
-      stockDiv.textContent = `✓ In Stock (${product.stock} available)`;
+      stockDiv.className = 'stock-badge in-stock';
+      stockDiv.innerHTML = `<span class="stock-icon">✓</span> In Stock (${product.stock} available)`;
     } else {
-      stockDiv.className = 'stock-status out-of-stock';
-      stockDiv.textContent = '✗ Out of Stock';
+      stockDiv.className = 'stock-badge out-of-stock';
+      stockDiv.innerHTML = `<span class="stock-icon">✗</span> Out of Stock`;
     }
 
-    document.getElementById('detailDescription').innerHTML = `<strong>Description:</strong><p>${product.description || 'No description available'}</p>`;
-    document.getElementById('quantityInput').value = 1;
+    // Quantity Input - set max stock
+    const quantityInput = document.getElementById('quantityInput');
+    quantityInput.value = 1;
+    quantityInput.dataset.max = product.stock;
+    quantityInput.disabled = product.stock === 0;
 
+    // Specifications
+    let specsHtml = '';
+    if (product.specifications && Object.keys(product.specifications).length > 0) {
+      specsHtml = '<table class="specs-table">';
+      Object.entries(product.specifications).forEach(([key, value]) => {
+        specsHtml += `<tr><td class="spec-key">${key}</td><td class="spec-value">${value}</td></tr>`;
+      });
+      specsHtml += '</table>';
+    } else {
+      specsHtml = '<p class="no-specs">No specifications available</p>';
+    }
+    document.getElementById('detailSpecs').innerHTML = specsHtml;
+
+    // Description
+    document.getElementById('detailDescription').innerHTML = product.description ? `<p>${product.description}</p>` : '<p class="no-description">No description available</p>';
+
+    // Load related products
+    loadRelatedProducts(product.category, productId);
+
+    // Reset to first tab
+    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('tab-description').classList.add('active');
+    document.querySelector('.tab-button').classList.add('active');
+
+    // Show modal
     document.getElementById('productModal').style.display = 'block';
   } catch (error) {
     console.error('Error loading product:', error);
-    alert('Error loading product details');
+    showToast('Error loading product details', 'error');
   }
 }
 
@@ -137,9 +171,9 @@ async function addToCart() {
     });
 
     if (response.ok) {
-      alert('Product added to cart!');
+      showToast('✓ Product added to cart!', 'success');
       loadCart();
-      closeModal();
+      setTimeout(() => closeModal(), 800);
     }
   } catch (error) {
     console.error('Error adding to cart:', error);
@@ -512,6 +546,96 @@ function searchProducts() {
 // Change detail image in gallery
 function changeDetailImage(imageUrl) {
   document.getElementById('detailImage').src = imageUrl;
+}
+
+// Professional Product Modal Functions
+
+// Switch between product tabs
+function switchProductTab(tabName) {
+  // Hide all tabs
+  const tabPanes = document.querySelectorAll('.tab-pane');
+  tabPanes.forEach(pane => pane.classList.remove('active'));
+
+  // Remove active class from buttons
+  const tabButtons = document.querySelectorAll('.tab-button');
+  tabButtons.forEach(btn => btn.classList.remove('active'));
+
+  // Show selected tab
+  document.getElementById(`tab-${tabName}`).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Increment quantity
+function incrementQuantity() {
+  const input = document.getElementById('quantityInput');
+  const max = parseInt(document.getElementById('quantityInput').dataset.max) || 999;
+  if (parseInt(input.value) < max) {
+    input.value = parseInt(input.value) + 1;
+  }
+}
+
+// Decrement quantity
+function decrementQuantity() {
+  const input = document.getElementById('quantityInput');
+  if (parseInt(input.value) > 1) {
+    input.value = parseInt(input.value) - 1;
+  }
+}
+
+// Show toast notification
+function showToast(message, type = 'info') {
+  // Remove existing toast if any
+  const existingToast = document.querySelector('.toast-notification');
+  if (existingToast) existingToast.remove();
+
+  const toast = document.createElement('div');
+  toast.className = `toast-notification toast-${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  // Auto remove after 3 seconds
+  setTimeout(() => {
+    toast.classList.add('show');
+  }, 10);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 3500);
+}
+
+// Load related products
+async function loadRelatedProducts(category, currentProductId) {
+  try {
+    const response = await fetch(`${API_BASE}/products?category=${category}`);
+    const products = await response.json();
+
+    // Filter out current product and get max 4 items
+    const related = products.filter(p => p._id !== currentProductId).slice(0, 4);
+
+    const container = document.getElementById('relatedProductsContainer');
+    if (related.length === 0) {
+      container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999;">No related products found</p>';
+      return;
+    }
+
+    container.innerHTML = related.map(product => {
+      const imageUrl = product.images && product.images.length > 0 ? product.images[0] : (product.image || 'https://via.placeholder.com/200x150');
+      return `
+        <div class="related-product-card">
+          <div class="related-product-image">
+            <img src="${imageUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/200x150'">
+          </div>
+          <div class="related-product-info">
+            <h4 class="related-product-name">${product.name}</h4>
+            <p class="related-product-price">${product.price} SAR</p>
+            <button class="btn-quick-view" onclick="viewProduct('${product._id}')">View</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (error) {
+    console.error('Error loading related products:', error);
+  }
 }
 
 // Modal Controls
