@@ -1,0 +1,12 @@
+/* App Styles */
+body {
+  background: #FFFFFF;
+  color: #000000;
+  font-family: 'Inter', sans-serif;
+}
+
+@supports (font-variation-settings: normal) {
+  html {
+    font-family: 'Inter var', sans-serif;
+  }
+}
