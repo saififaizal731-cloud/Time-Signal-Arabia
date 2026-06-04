@@ -1263,9 +1263,9 @@ async function deleteProduct(productId) {
 
 function showScrapeForm() {
   let html = `
-    <h3>📋 Paste Product URL</h3>
+    <h3>📋 Add Product from Link or Upload</h3>
     <p style="color: #666; margin-bottom: 20px;">
-      Paste a product URL from another website and we'll automatically extract the details for you.
+      Paste a product URL from another website and we'll automatically extract the details. You can also upload your own product image or use the scraped one.
     </p>
 
     <div class="scrape-url-section" style="margin-bottom: 30px;">
@@ -1393,10 +1393,27 @@ function showScrapedProductForm(scrapedData) {
         </div>
 
         <div id="scrapedImageUploadSection" style="display: none;">
-          <input type="file" id="scrapedProductImageUpload" accept="image/jpeg,image/jpg,image/png,image/webp">
-          <div id="scrapedUploadPreview" style="margin-top: 10px;"></div>
-          <div id="scrapedUploadStatus" style="margin-top: 5px; font-size: 12px;"></div>
+          <input type="file" id="scrapedProductImageUpload" accept="image/jpeg,image/jpg,image/png,image/webp" style="display: none;">
+          <label for="scrapedProductImageUpload" class="image-upload-btn" style="display: inline-block; margin-bottom: 15px;">
+            <span class="upload-icon">📷</span>
+            <span>Upload Image</span>
+          </label>
+          <div id="scrapedUploadPreview" class="image-preview-box" style="margin-top: 10px;"></div>
+          <div id="scrapedUploadStatus" style="margin-top: 5px; font-size: 12px; text-align: center;"></div>
         </div>
+
+        <script>
+          document.getElementById('scrapedProductImageUpload').addEventListener('change', function() {
+            const preview = document.getElementById('scrapedUploadPreview');
+            if (this.files && this.files[0]) {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview" style="max-width: 150px; max-height: 150px; border-radius: 4px;">';
+              };
+              reader.readAsDataURL(this.files[0]);
+            }
+          });
+        </script>
       </div>
     </div>
 
