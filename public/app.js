@@ -1475,27 +1475,167 @@ function showScrapedProductForm(scrapedData) {
         </div>
 
         <div id="scrapedImageUploadSection" style="display: none;">
-          <input type="file" id="scrapedProductImageUpload" accept="image/jpeg,image/jpg,image/png,image/webp" style="display: none;">
-          <label for="scrapedProductImageUpload" class="image-upload-btn" style="display: inline-block; margin-bottom: 15px;">
-            <span class="upload-icon">📷</span>
-            <span>Upload Image</span>
-          </label>
-          <div id="scrapedUploadPreview" class="image-preview-box" style="margin-top: 10px;"></div>
-          <div id="scrapedUploadStatus" style="margin-top: 5px; font-size: 12px; text-align: center;"></div>
-        </div>
+          <input type="file" id="scrapedProductImageUpload" accept="image/jpeg,image/jpg,image/png,image/webp" style="display: none;" multiple>
 
-        <script>
-          document.getElementById('scrapedProductImageUpload').addEventListener('change', function() {
-            const preview = document.getElementById('scrapedUploadPreview');
-            if (this.files && this.files[0]) {
-              const reader = new FileReader();
-              reader.onload = function(e) {
-                preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview" style="max-width: 150px; max-height: 150px; border-radius: 4px;">';
-              };
-              reader.readAsDataURL(this.files[0]);
+          <!-- Drag & Drop Zone -->
+          <div id="scrapedImageDropZone" style="
+            border: 2px dashed #0052cc;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+          " onmouseover="this.style.backgroundColor='#e8ebff'; this.style.borderColor='#0040a0';" onmouseout="this.style.backgroundColor='#f8f9ff'; this.style.borderColor='#0052cc';">
+            <div style="font-size: 48px; margin-bottom: 10px;">📷</div>
+            <div style="font-size: 16px; font-weight: bold; color: #0052cc; margin-bottom: 5px;">Drag images here</div>
+            <div style="font-size: 13px; color: #666; margin-bottom: 15px;">or click to select files</div>
+            <div style="font-size: 12px; color: #999;">Supported: JPG, PNG, WebP (Max 5MB per image)</div>
+            <label for="scrapedProductImageUpload" class="image-upload-btn" style="display: inline-block; margin-top: 10px;">
+              <span class="upload-icon">📁</span>
+              <span>Choose File</span>
+            </label>
+          </div>
+
+          <!-- Image Preview Gallery -->
+          <div id="scrapedUploadPreviewGallery" style="
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+            min-height: 120px;
+          "></div>
+
+          <!-- Status Message -->
+          <div id="scrapedUploadStatus" style="
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+          "></div>
+
+          <script>
+            const dropZone = document.getElementById('scrapedImageDropZone');
+            const fileInput = document.getElementById('scrapedProductImageUpload');
+            const previewGallery = document.getElementById('scrapedUploadPreviewGallery');
+            const uploadStatus = document.getElementById('scrapedUploadStatus');
+
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+              dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+              e.preventDefault();
+              e.stopPropagation();
             }
-          });
-        </script>
+
+            // Highlight drop zone when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+              dropZone.addEventListener(eventName, () => {
+                dropZone.style.backgroundColor = '#e8ebff';
+                dropZone.style.borderColor = '#0040a0';
+              });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+              dropZone.addEventListener(eventName, () => {
+                dropZone.style.backgroundColor = '#f8f9ff';
+                dropZone.style.borderColor = '#0052cc';
+              });
+            });
+
+            // Handle drop
+            dropZone.addEventListener('drop', (e) => {
+              const dt = e.dataTransfer;
+              const files = dt.files;
+              fileInput.files = files;
+              handleFiles(files);
+            });
+
+            // Handle file selection from input
+            fileInput.addEventListener('change', (e) => {
+              handleFiles(e.target.files);
+            });
+
+            // Handle file preview
+            function handleFiles(files) {
+              previewGallery.innerHTML = '';
+              let totalSize = 0;
+
+              Array.from(files).forEach((file, index) => {
+                if (!file.type.match('image.*')) {
+                  showStatus('❌ Only image files are allowed!', '#ff4444');
+                  return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                  showStatus('❌ File size exceeds 5MB limit!', '#ff4444');
+                  return;
+                }
+
+                totalSize += file.size;
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                  const previewDiv = document.createElement('div');
+                  previewDiv.style.position = 'relative';
+                  previewDiv.style.borderRadius = '8px';
+                  previewDiv.style.overflow = 'hidden';
+                  previewDiv.style.border = '1px solid #ddd';
+                  previewDiv.style.aspectRatio = '1';
+
+                  const img = document.createElement('img');
+                  img.src = e.target.result;
+                  img.style.width = '100%';
+                  img.style.height = '100%';
+                  img.style.objectFit = 'cover';
+
+                  const removeBtn = document.createElement('button');
+                  removeBtn.type = 'button';
+                  removeBtn.innerHTML = '✕';
+                  removeBtn.style.position = 'absolute';
+                  removeBtn.style.top = '5px';
+                  removeBtn.style.right = '5px';
+                  removeBtn.style.background = '#ff4444';
+                  removeBtn.style.color = 'white';
+                  removeBtn.style.border = 'none';
+                  removeBtn.style.borderRadius = '50%';
+                  removeBtn.style.width = '24px';
+                  removeBtn.style.height = '24px';
+                  removeBtn.style.cursor = 'pointer';
+                  removeBtn.style.fontSize = '16px';
+                  removeBtn.style.padding = '0';
+                  removeBtn.onclick = (e) => {
+                    e.preventDefault();
+                    previewDiv.remove();
+                    showStatus('✓ Image removed', '#28a745');
+                  };
+
+                  previewDiv.appendChild(img);
+                  previewDiv.appendChild(removeBtn);
+                  previewGallery.appendChild(previewDiv);
+
+                  showStatus('✓ ' + files.length + ' image(s) ready to upload', '#28a745');
+                };
+
+                reader.readAsDataURL(file);
+              });
+            }
+
+            function showStatus(message, color) {
+              uploadStatus.innerHTML = message;
+              uploadStatus.style.backgroundColor = color.includes('28a745') ? '#d4edda' : color.includes('0052cc') ? '#d1ecf1' : '#f8d7da';
+              uploadStatus.style.color = color.includes('28a745') ? '#155724' : color.includes('0052cc') ? '#0c5460' : '#721c24';
+              uploadStatus.style.display = 'block';
+            }
+
+            // Make drop zone clickable
+            dropZone.addEventListener('click', () => fileInput.click());
+          </script>
       </div>
     </div>
 
