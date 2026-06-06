@@ -1810,18 +1810,14 @@ const settingsState = {
 };
 
 function openSettings() {
-  const modal = document.getElementById('settingsModal');
-  if (modal) {
-    modal.style.display = 'flex';
-    loadUserSettings();
-  }
+  // Settings Panel is DISABLED - Cannot open
+  console.log('Settings Panel is currently disabled');
+  return false;
 }
 
 function closeSettings() {
-  const modal = document.getElementById('settingsModal');
-  if (modal) {
-    modal.style.display = 'none';
-  }
+  // Settings Panel is DISABLED - Cannot close
+  return false;
 }
 
 function switchSettingsTab(tabName, event) {

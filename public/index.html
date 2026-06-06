@@ -29,7 +29,6 @@
             <a href="#wishlist" class="icon-link">❤️ Wishlist</a>
             <a href="#cart" class="icon-link" onclick="openCart()">🛒 Cart <span id="cartCount" class="badge">0</span></a>
             <a href="#account" class="icon-link" onclick="openAccount()">👤 Account</a>
-            <a href="#settings" class="icon-link settings-icon-link" onclick="openSettings()" style="margin-left: auto; background: #10b981; padding: 8px 16px; border-radius: 6px; font-weight: bold; color: white; transition: all 0.2s;">⚙️ Settings</a>
           </div>
         </div>
       </div>
@@ -322,8 +321,8 @@
     </div>
   </div>
 
-  <!-- Settings Panel Modal -->
-  <div id="settingsModal" class="modal settings-modal" style="display: none;">
+  <!-- Settings Panel Modal - DISABLED/HIDDEN -->
+  <div id="settingsModal" class="modal settings-modal" style="display: none !important; visibility: hidden !important; pointer-events: none;">
     <div class="settings-modal-container">
       <div class="settings-sidebar">
         <div class="settings-header-close">
