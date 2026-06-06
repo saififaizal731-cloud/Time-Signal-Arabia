@@ -511,7 +511,14 @@ async function addToWishlist(productId = null) {
 
 // User Authentication
 function openAccount() {
+  console.log('openAccount() called - currentUser:', currentUser);
   let content = document.getElementById('accountContent');
+
+  if (!content) {
+    console.error('ERROR: accountContent div not found!');
+    alert('Account modal not found. Please refresh the page.');
+    return;
+  }
 
   if (currentUser) {
     content.innerHTML = `
@@ -573,7 +580,14 @@ function openAccount() {
     `;
   }
 
-  document.getElementById('accountModal').style.display = 'block';
+  const modal = document.getElementById('accountModal');
+  if (modal) {
+    modal.style.display = 'block';
+    console.log('Account modal opened successfully');
+  } else {
+    console.error('ERROR: accountModal div not found!');
+    alert('Account modal not found. Please refresh the page.');
+  }
 }
 
 // Handle Login
