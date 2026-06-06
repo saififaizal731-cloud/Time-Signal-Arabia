@@ -1,0 +1,115 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    ⚙️ SETTINGS PANEL - QUICK START ⚙️                       ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+STEP 1: START YOUR SERVER
+═══════════════════════════════════════════════════════════════════════════
+   Command: npm start
+   Then open: http://localhost:5000
+
+
+STEP 2: FIND THE SETTINGS BUTTON
+═══════════════════════════════════════════════════════════════════════════
+
+   Your Website Top Bar Looks Like This:
+
+   ┌─────────────────────────────────────────────────────────────────────┐
+   │ 🏠 TSA LOGO          [Search for products...]   EN|AR ❤️ 🛒 👤 🟢⚙️ │
+   └─────────────────────────────────────────────────────────────────────┘
+                                                            └─────┬─────┘
+                                                                  │
+                                                        CLICK HERE! ↓
+
+   The green button with ⚙️ icon is your Settings button!
+
+
+STEP 3: CLICK THE GREEN SETTINGS BUTTON
+═══════════════════════════════════════════════════════════════════════════
+   When you click it, a big window will pop up with these 4 tabs:
+
+   ┌───────────────────────┬────────────────────────────────────────────┐
+   │ 🔍 Search Settings    │                                            │
+   │                       │  📌 SETTINGS                               │
+   │ 🌐 Connection        │     Manage network and system preferences   │
+   │ 📡 Wi-Fi Settings    │                                            │
+   │ 🔐 Security          │  [Form fields for your settings here]      │
+   │ ⚙️  System Admin      │                                            │
+   │                       │  💾 Save Changes   ↻ Reset                │
+   └───────────────────────┴────────────────────────────────────────────┘
+
+
+STEP 4: CONFIGURE YOUR SETTINGS
+═══════════════════════════════════════════════════════════════════════════
+
+   🌐 CONNECTION TAB
+      • Choose Internet Type: DHCP, Static IP, or PPPoE
+      • Enter Primary DNS (e.g., 8.8.8.8)
+      • Enter Secondary DNS (e.g., 8.8.4.4)
+      • Enable/Disable DHCP Server
+
+   📡 WI-FI SETTINGS TAB
+      • Set 2.4GHz Network Name (SSID)
+      • Set 2.4GHz Password
+      • Set 5GHz Network Name (SSID)
+      • Set 5GHz Password
+      • Choose Security: WPA2 or WPA3
+      • Enable Guest Network (optional)
+
+   🔐 SECURITY & FIREWALL TAB
+      • Add Port Forwarding Rules
+      • Enable VPN Client (OpenVPN or WireGuard)
+      • Configure VPN Settings
+
+   ⚙️ SYSTEM ADMIN TAB
+      • Change Admin Password
+      • Check for Firmware Updates
+      • Backup Configuration (download)
+      • Restore Configuration (upload)
+      • Factory Reset (careful!)
+
+
+STEP 5: SAVE YOUR SETTINGS
+═══════════════════════════════════════════════════════════════════════════
+   After filling in the settings:
+   1. Click the green "💾 Save Changes" button
+   2. A green notification will show "Settings saved successfully"
+   3. Your settings are now saved!
+
+
+QUICK TIPS
+═══════════════════════════════════════════════════════════════════════════
+   ✅ The Settings button is ALWAYS in the top-right corner
+   ✅ It's GREEN to stand out from other buttons
+   ✅ You can close the panel by clicking the X in the top-right of the modal
+   ✅ Click "↻ Reset" to undo unsaved changes
+   ✅ Each tab has independent Save/Reset buttons
+
+
+FILE LOCATIONS (For Developers)
+═══════════════════════════════════════════════════════════════════════════
+   Settings HTML:   public/index.html (line 32)
+   Settings CSS:    public/style.css (search for "SETTINGS PANEL STYLES")
+   Settings JS:     public/app.js (search for "SETTINGS PANEL FUNCTIONS")
+   Settings Guide:  SETTINGS_GUIDE.md (this directory)
+
+
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════
+   ❌ Can't see the Settings button?
+      → Reload the page (Ctrl+R)
+      → Clear browser cache (Ctrl+Shift+Delete)
+      → Make sure npm start is running
+
+   ❌ Settings button doesn't work?
+      → Press F12 to open Developer Console
+      → Look for red errors
+      → Try a different browser
+
+   ❌ Forgot a field when saving?
+      → Click "↻ Reset" and try again
+      → Or just reload and start over
+
+
+═══════════════════════════════════════════════════════════════════════════
+That's it! Your Settings Panel is ready to use! 🎉
+═══════════════════════════════════════════════════════════════════════════
