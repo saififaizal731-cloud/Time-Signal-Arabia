@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings Panel - TSA Time Signal Arabia</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #e5e7eb;
+    }
+
+    .settings-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: #1a1f3a;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      display: flex;
+      height: calc(100vh - 40px);
+    }
+
+    /* ===== SIDEBAR ===== */
+    .settings-sidebar {
+      width: 280px;
+      background: #0f172a;
+      border-right: 1px solid #374151;
+      padding: 24px 0;
+      overflow-y: auto;
+      position: sticky;
+      top: 0;
+      max-height: 100vh;
+    }
+
+    .settings-sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .settings-sidebar::-webkit-scrollbar-track {
+      background: #1a1f3a;
+    }
+
+    .settings-sidebar::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 3px;
+    }
+
+    .sidebar-search {
+      padding: 0 16px 20px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #374151;
+    }
+
+    .sidebar-search input {
+      width: 100%;
+      padding: 10px 12px;
+      background: #1a1f3a;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #e5e7eb;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .sidebar-search input:focus {
+      outline: none;
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .sidebar-search input::placeholder {
+      color: #6b7280;
+    }
+
+    .sidebar-category {
+      cursor: pointer;
+      padding: 12px 16px;
+      margin: 4px 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: 8px;
+      transition: all 0.2s;
+      color: #9ca3af;
+      font-size: 14px;
+      font-weight: 500;
+      user-select: none;
+    }
+
+    .sidebar-category:hover {
+      background: #1a1f3a;
+      color: #e5e7eb;
+    }
+
+    .sidebar-category.active {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border-left: 3px solid #d1fae5;
+    }
+
+    .sidebar-category-icon {
+      font-size: 18px;
+      min-width: 24px;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .settings-main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .settings-main::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .settings-main::-webkit-scrollbar-track {
+      background: #1a1f3a;
+    }
+
+    .settings-main::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 3px;
+    }
+
+    .settings-header {
+      margin-bottom: 32px;
+    }
+
+    .settings-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #f3f4f6;
+    }
+
+    .settings-header p {
+      font-size: 14px;
+      color: #9ca3af;
+    }
+
+    /* ===== SETTINGS SECTIONS ===== */
+    .settings-section {
+      display: none;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    .settings-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .settings-group {
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid #374151;
+    }
+
+    .settings-group:last-child {
+      border-bottom: none;
+    }
+
+    .settings-group-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .settings-group-title-icon {
+      font-size: 18px;
+    }
+
+    /* ===== FORM ELEMENTS ===== */
+    .settings-item {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .settings-item.inline {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .settings-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .settings-label-help {
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: normal;
+      cursor: help;
+      display: inline-block;
+    }
+
+    .settings-label-help:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      background: #111827;
+      color: #f3f4f6;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
+      border: 1px solid #374151;
+      margin-top: -35px;
+      margin-left: -10px;
+      pointer-events: none;
+    }
+
+    .settings-input,
+    .settings-select,
+    .settings-textarea {
+      padding: 10px 12px;
+      background: #0f172a;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #e5e7eb;
+      font-size: 14px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .settings-input:focus,
+    .settings-select:focus,
+    .settings-textarea:focus {
+      outline: none;
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+      background: #0f172a;
+    }
+
+    .settings-input::placeholder {
+      color: #6b7280;
+    }
+
+    .settings-select {
+      cursor: pointer;
+    }
+
+    .settings-select option {
+      background: #1a1f3a;
+      color: #e5e7eb;
+    }
+
+    /* ===== TOGGLES ===== */
+    .toggle-switch {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .toggle-input {
+      display: none;
+    }
+
+    .toggle-slider {
+      position: relative;
+      width: 48px;
+      height: 28px;
+      background: #4b5563;
+      border-radius: 14px;
+      transition: background 0.3s;
+      border: 2px solid transparent;
+    }
+
+    .toggle-input:checked + .toggle-slider {
+      background: #10b981;
+    }
+
+    .toggle-slider::after {
+      content: '';
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background: white;
+      border-radius: 50%;
+      top: 1px;
+      left: 2px;
+      transition: left 0.3s;
+    }
+
+    .toggle-input:checked + .toggle-slider::after {
+      left: 22px;
+    }
+
+    /* ===== PORT FORWARDING TABLE ===== */
+    .port-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    .port-table thead {
+      background: #0f172a;
+      border-bottom: 2px solid #374151;
+    }
+
+    .port-table th {
+      padding: 12px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .port-table td {
+      padding: 12px;
+      border-bottom: 1px solid #374151;
+      font-size: 14px;
+      color: #e5e7eb;
+    }
+
+    .port-table tr:hover {
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .port-remove-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.2s;
+    }
+
+    .port-remove-btn:hover {
+      background: #dc2626;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: #374151;
+      color: #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    /* ===== ALERTS & TOASTS ===== */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid #10b981;
+      color: #d1fae5;
+    }
+
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid #f59e0b;
+      color: #fcd34d;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #10b981;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      z-index: 9999;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .toast.error {
+      background: #ef4444;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-container {
+      margin: 16px 0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #374151;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 4px;
+    }
+
+    .progress-text {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 6px;
+    }
+
+    /* ===== PORT FORWARDING BUILDER ===== */
+    .port-builder {
+      background: #0f172a;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #374151;
+    }
+
+    .port-builder-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .port-builder-row:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ===== RESPONSIVE DESIGN ===== */
+    @media (max-width: 1024px) {
+      .settings-container {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .settings-sidebar {
+        width: 100%;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid #374151;
+        padding: 16px;
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+
+      .sidebar-search {
+        display: none;
+      }
+
+      .sidebar-category {
+        margin: 0 4px;
+        white-space: nowrap;
+      }
+
+      .settings-main {
+        padding: 24px;
+      }
+
+      .port-builder-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .settings-container {
+        border-radius: 8px;
+        height: auto;
+      }
+
+      .settings-header h1 {
+        font-size: 24px;
+      }
+
+      .settings-main {
+        padding: 16px;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .settings-item.inline {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .toggle-switch {
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-container">
+    <!-- ===== SIDEBAR ===== -->
+    <div class="settings-sidebar">
+      <div class="sidebar-search">
+        <input type="text" id="sidebarSearch" placeholder="Search settings...">
+      </div>
+
+      <div class="sidebar-category active" onclick="switchTab('connection')">
+        <span class="sidebar-category-icon">🌐</span>
+        <span>Connection</span>
+      </div>
+
+      <div class="sidebar-category" onclick="switchTab('wifi')">
+        <span class="sidebar-category-icon">📡</span>
+        <span>Wi-Fi Settings</span>
+      </div>
+
+      <div class="sidebar-category" onclick="switchTab('security')">
+        <span class="sidebar-category-icon">🔐</span>
+        <span>Security & Firewall</span>
+      </div>
+
+      <div class="sidebar-category" onclick="switchTab('admin')">
+        <span class="sidebar-category-icon">⚙️</span>
+        <span>System Admin</span>
+      </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="settings-main">
+      <div class="settings-header">
+        <h1>Settings</h1>
+        <p>Manage your network and system preferences</p>
+      </div>
+
+      <!-- ===== CONNECTION SECTION ===== -->
+      <div class="settings-section active" id="connection-section">
+        <div class="settings-group">
+          <div class="settings-group-title">
+            <span class="settings-group-title-icon">🌐</span>
+            Connection Settings
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">
+              Internet Connection Type
+              <span class="settings-label-help" data-tooltip="Select your connection method">?</span>
+            </label>
+            <select class="settings-select" id="connectionType" onchange="updateConnectionSettings()">
+              <option value="dhcp">DHCP (Automatic IP)</option>
+              <option value="static">Static IP</option>
+              <option value="pppoe">PPPoE</option>
+            </select>
+          </div>
+
+          <div class="settings-item" id="static-ip-section" style="display: none;">
+            <label class="settings-label">IP Address</label>
+            <input type="text" class="settings-input" placeholder="e.g., 192.168.1.100" id="ipAddress">
+          </div>
+
+          <div class="settings-item" id="subnet-section" style="display: none;">
+            <label class="settings-label">Subnet Mask</label>
+            <input type="text" class="settings-input" placeholder="e.g., 255.255.255.0" id="subnetMask">
+          </div>
+
+          <div class="settings-item" id="gateway-section" style="display: none;">
+            <label class="settings-label">Default Gateway</label>
+            <input type="text" class="settings-input" placeholder="e.g., 192.168.1.1" id="gateway">
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">
+              Primary DNS
+              <span class="settings-label-help" data-tooltip="Primary DNS server address">?</span>
+            </label>
+            <input type="text" class="settings-input" placeholder="e.g., 8.8.8.8" id="primaryDns">
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">
+              Secondary DNS
+              <span class="settings-label-help" data-tooltip="Backup DNS server address">?</span>
+            </label>
+            <input type="text" class="settings-input" placeholder="e.g., 8.8.4.4" id="secondaryDns">
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">
+            <span class="settings-group-title-icon">📶</span>
+            DHCP Server
+          </div>
+
+          <div class="settings-item inline">
+            <label class="settings-label">Enable DHCP Server</label>
+            <label class="toggle-switch">
+              <input type="checkbox" class="toggle-input" id="dhcpEnabled" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">DHCP Pool Start</label>
+            <input type="text" class="settings-input" placeholder="e.g., 192.168.1.100" id="dhcpStart">
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">DHCP Pool End</label>
+            <input type="text" class="settings-input" placeholder="e.g., 192.168.1.200" id="dhcpEnd">
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="saveSettings('connection')">💾 Save Changes</button>
+          <button class="btn btn-secondary" onclick="resetSettings('connection')">↻ Reset</button>
+        </div>
+      </div>
+
+      <!-- ===== WI-FI SECTION ===== -->
+      <div class="settings-section" id="wifi-section">
+        <div class="settings-group">
+          <div class="settings-group-title">
+            <span class="settings-group-title-icon">📡</span>
+            2.4GHz Band
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">
+              Network Name (SSID)
+              <span class="settings-label-help" data-tooltip="The name your Wi-Fi network broadcasts">?</span>
+            </label>
+            <input type="text" class="settings-input" placeholder="e.g., TSA-Network-24" id="ssid24">
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">
+              Security Protocol
+              <span class="settings-label-help" data-tooltip="WPA3 is more secure than WPA2">?</span>
+            </label>
+            <select class="settings-select" id="security24">
+              <option value="wpa2">WPA2</option>
+              <option value="wpa3">WPA3</option>
+              <option value="open">Open (Not Recommended)</option>
+            </select>
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">Password</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="password" class="settings-input" style="flex: 1;" placeholder="Enter password" id="password24">
+              <button class="btn btn-secondary" onclick="togglePasswordVisibility('password24')">👁️</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">
+            <span class="settings-group-title-icon">📡</span>
+            5GHz Band
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">Network Name (SSID)</label>
+            <input type="text" class="settings-input" placeholder="e.g., TSA-Network-5" id="ssid5">
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">Security Protocol</label>
+            <select class="settings-select" id="security5">
+              <option value="wpa2">WPA2</option>
+              <option value="wpa3">WPA3</option>
+              <option value="open">Open (Not Recommended)</option>
+            </select>
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">Password</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="password" class="settings-input" style="flex: 1;" placeholder="Enter password" id="password5">
+              <button class="btn btn-secondary" onclick="togglePasswordVisibility('password5')">👁️</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">
+            <span class="settings-group-title-icon">🌐</span>
+            Guest Network
+          </div>
+
+          <div class="settings-item inline">
+            <label class="settings-label">Enable Guest Network</label>
+            <label class="toggle-switch">
+              <input type="checkbox" class="toggle-input" id="guestNetworkEnabled" onchange="updateGuestNetworkUI()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-item" id="guest-ssid-section" style="display: none;">
+            <label class="settings-label">Guest Network SSID</label>
+            <input type="text" class="settings-input" placeholder="e.g., TSA-Guest" id="guestSsid">
+          </div>
+
+          <div class="settings-item" id="guest-password-section" style="display: none;">
+            <label class="settings-label">Guest Network Password</label>
+            <input type="text" class="settings-input" placeholder="Enter password" id="guestPassword">
+          </div>
+
+          <div class="settings-item inline" id="guest-isolation-section" style="display: none;">
+            <label class="settings-label">
+              Network Isolation
+              <span class="settings-label-help" data-tooltip="Prevents guests from accessing local network">?</span>
+            </label>
+            <label class="toggle-switch">
+              <input type="checkbox" class="toggle-input" id="guestIsolation" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="saveSettings('wifi')">💾 Save Changes</button>
+          <button class="btn btn-secondary" onclick="resetSettings('wifi')">↻ Reset</button>
+        </div>
+      </div>
+
+      <!-- ===== SECURITY SECTION ===== -->
+      <div class="settings-section" id="security-section">
+        <div class="settings-group">
+          <div class="settings-group-title">
+            <span class="settings-group-title-icon">🔌</span>
+            Port Forwarding
+          </div>
+
+          <div class="alert alert-warning">
+            <span>⚠️</span>
+            <span>Configure port forwarding carefully. Improper settings may compromise network security.</span>
+          </div>
+
+          <div class="port-builder">
+            <div class="port-builder-row">
+              <div>
+                <label class="settings-label">Internal Port</label>
+                <input type="number" class="settings-input" placeholder="e.g., 80" id="internalPort" min="1" max="65535">
+              </div>
+              <div>
+                <label class="settings-label">External Port</label>
+                <input type="number" class="settings-input" placeholder="e.g., 8080" id="externalPort" min="1" max="65535">
+              </div>
+              <div>
+                <label class="settings-label">Protocol</label>
+                <select class="settings-select" id="protocol">
+                  <option value="tcp">TCP</option>
+                  <option value="udp">UDP</option>
+                  <option value="both">Both</option>
+                </select>
+              </div>
+              <div>
+                <label class="settings-label">Target IP</label>
+                <input type="text" class="settings-input" placeholder="192.168.1.100" id="targetIp">
+              </div>
+              <button class="btn btn-primary" onclick="addPortRule()">Add</button>
+            </div>
+          </div>
+
+          <table class="port-table">
+            <thead>
+              <tr>
+                <th>Internal Port</th>
+                <th>External Port</th>
+                <th>Protocol</th>
+                <th>Target IP</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="portTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; color: #9ca3af; padding: 24px;">No port forwarding rules configured</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">
+            <span class="settings-group-title-icon">🔒</span>
+            VPN Client
+          </div>
+
+          <div class="settings-item inline">
+            <label class="settings-label">
+              Enable VPN Client
+              <span class="settings-label-help" data-tooltip="Route traffic through VPN for privacy">?</span>
+            </label>
+            <label class="toggle-switch">
+              <input type="checkbox" class="toggle-input" id="vpnEnabled" onchange="updateVpnUI()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div style="display: none;" id="vpn-settings">
+            <div class="settings-item">
+              <label class="settings-label">VPN Type</label>
+              <select class="settings-select" id="vpnType">
+                <option value="openvpn">OpenVPN</option>
+                <option value="wireguard">WireGuard</option>
+              </select>
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">VPN Server Address</label>
+              <input type="text" class="settings-input" placeholder="vpn.example.com" id="vpnServer">
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">VPN Port</label>
+              <input type="number" class="settings-input" placeholder="1194" id="vpnPort" min="1" max="65535">
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Username</label>
+              <input type="text" class="settings-input" placeholder="VPN username" id="vpnUsername">
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Password</label>
+              <input type="password" class="settings-input" placeholder="VPN password" id="vpnPassword">
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="saveSettings('security')">💾 Save Changes</button>
+          <button class="btn btn-secondary" onclick="resetSettings('security')">↻ Reset</button>
+        </div>
+      </div>
+
+      <!-- ===== ADMIN SECTION ===== -->
+      <div class="settings-section" id="admin-section">
+        <div class="settings-group">
+          <div class="settings-group-title">
+            <span class="settings-group-title-icon">🔑</span>
+            Admin Password
+          </div>
+
+          <div class="alert alert-warning">
+            <span>⚠️</span>
+            <span>Use a strong password combining uppercase, lowercase, numbers, and symbols.</span>
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">Current Password</label>
+            <input type="password" class="settings-input" placeholder="Enter current password" id="currentPassword">
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">New Password</label>
+            <input type="password" class="settings-input" placeholder="Enter new password" id="newPassword">
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">Confirm New Password</label>
+            <input type="password" class="settings-input" placeholder="Confirm new password" id="confirmPassword">
+          </div>
+
+          <button class="btn btn-primary" onclick="changePassword()" style="margin-top: 12px;">🔑 Change Password</button>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">
+            <span class="settings-group-title-icon">📦</span>
+            Firmware Update
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">Current Firmware Version</label>
+            <div style="padding: 10px 12px; background: #0f172a; border-radius: 6px; color: #10b981; font-weight: 500;">
+              v2.4.1 (Latest)
+            </div>
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">Check for Updates</label>
+            <button class="btn btn-secondary" onclick="checkFirmwareUpdates()">🔄 Check Now</button>
+          </div>
+
+          <div id="firmwareStatus" style="display: none;">
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill" id="firmwareProgress" style="width: 0%;"></div>
+              </div>
+              <div class="progress-text" id="firmwareText">Preparing update...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">
+            <span class="settings-group-title-icon">💾</span>
+            Backup & Restore
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">Backup Configuration</label>
+            <p style="font-size: 13px; color: #9ca3af; margin-bottom: 12px;">
+              Download a backup of your current settings
+            </p>
+            <button class="btn btn-primary" onclick="backupConfiguration()">⬇️ Download Backup</button>
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-label">Restore Configuration</label>
+            <p style="font-size: 13px; color: #9ca3af; margin-bottom: 12px;">
+              Restore settings from a previously saved backup
+            </p>
+            <input type="file" id="restoreFile" accept=".json" style="display: none;">
+            <button class="btn btn-secondary" onclick="document.getElementById('restoreFile').click()">📂 Choose File</button>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="saveSettings('admin')">💾 Save Changes</button>
+          <button class="btn btn-danger" onclick="factoryReset()">🔄 Factory Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== STATE MANAGEMENT =====
+    const settingsState = {
+      connection: {},
+      wifi: {},
+      security: {},
+      admin: {},
+      portRules: []
+    };
+
+    // ===== TAB SWITCHING =====
+    function switchTab(tabName) {
+      // Hide all sections
+      document.querySelectorAll('.settings-section').forEach(section => {
+        section.classList.remove('active');
+      });
+
+      // Remove active class from all categories
+      document.querySelectorAll('.sidebar-category').forEach(cat => {
+        cat.classList.remove('active');
+      });
+
+      // Show selected section
+      const sectionId = `${tabName}-section`;
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.classList.add('active');
+      }
+
+      // Add active class to clicked category
+      event.target.closest('.sidebar-category').classList.add('active');
+    }
+
+    // ===== CONNECTION SETTINGS =====
+    function updateConnectionSettings() {
+      const type = document.getElementById('connectionType').value;
+      document.getElementById('static-ip-section').style.display = type === 'static' ? 'flex' : 'none';
+      document.getElementById('subnet-section').style.display = type === 'static' ? 'flex' : 'none';
+      document.getElementById('gateway-section').style.display = type === 'static' ? 'flex' : 'none';
+    }
+
+    // ===== WI-FI SETTINGS =====
+    function togglePasswordVisibility(inputId) {
+      const input = document.getElementById(inputId);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    function updateGuestNetworkUI() {
+      const enabled = document.getElementById('guestNetworkEnabled').checked;
+      document.getElementById('guest-ssid-section').style.display = enabled ? 'flex' : 'none';
+      document.getElementById('guest-password-section').style.display = enabled ? 'flex' : 'none';
+      document.getElementById('guest-isolation-section').style.display = enabled ? 'flex' : 'none';
+    }
+
+    // ===== SECURITY SETTINGS =====
+    function addPortRule() {
+      const internalPort = document.getElementById('internalPort').value;
+      const externalPort = document.getElementById('externalPort').value;
+      const protocol = document.getElementById('protocol').value;
+      const targetIp = document.getElementById('targetIp').value;
+
+      if (!internalPort || !externalPort || !targetIp) {
+        showToast('Please fill in all fields', 'error');
+        return;
+      }
+
+      if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(targetIp)) {
+        showToast('Invalid IP address format', 'error');
+        return;
+      }
+
+      const rule = { internalPort, externalPort, protocol, targetIp };
+      settingsState.portRules.push(rule);
+
+      // Clear inputs
+      document.getElementById('internalPort').value = '';
+      document.getElementById('externalPort').value = '';
+      document.getElementById('targetIp').value = '';
+
+      renderPortTable();
+      showToast('Port rule added successfully', 'success');
+    }
+
+    function removePortRule(index) {
+      settingsState.portRules.splice(index, 1);
+      renderPortTable();
+      showToast('Port rule removed', 'success');
+    }
+
+    function renderPortTable() {
+      const tbody = document.getElementById('portTableBody');
+      if (settingsState.portRules.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #9ca3af; padding: 24px;">No port forwarding rules configured</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = settingsState.portRules.map((rule, index) => `
+        <tr>
+          <td>${rule.internalPort}</td>
+          <td>${rule.externalPort}</td>
+          <td>${rule.protocol.toUpperCase()}</td>
+          <td>${rule.targetIp}</td>
+          <td><button class="port-remove-btn" onclick="removePortRule(${index})">Delete</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function updateVpnUI() {
+      const enabled = document.getElementById('vpnEnabled').checked;
+      document.getElementById('vpn-settings').style.display = enabled ? 'block' : 'none';
+    }
+
+    // ===== ADMIN SETTINGS =====
+    function changePassword() {
+      const current = document.getElementById('currentPassword').value;
+      const newPass = document.getElementById('newPassword').value;
+      const confirm = document.getElementById('confirmPassword').value;
+
+      if (!current || !newPass || !confirm) {
+        showToast('Please fill in all password fields', 'error');
+        return;
+      }
+
+      if (newPass !== confirm) {
+        showToast('New passwords do not match', 'error');
+        return;
+      }
+
+      if (newPass.length < 8) {
+        showToast('Password must be at least 8 characters long', 'error');
+        return;
+      }
+
+      // Simulate API call
+      showToast('Password changed successfully', 'success');
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+    }
+
+    function checkFirmwareUpdates() {
+      const statusDiv = document.getElementById('firmwareStatus');
+      const progressFill = document.getElementById('firmwareProgress');
+      const progressText = document.getElementById('firmwareText');
+
+      statusDiv.style.display = 'block';
+      let progress = 0;
+
+      const interval = setInterval(() => {
+        progress += Math.random() * 30;
+        if (progress > 100) progress = 100;
+
+        progressFill.style.width = progress + '%';
+
+        if (progress === 100) {
+          progressText.textContent = 'Update check complete - no new updates available';
+          clearInterval(interval);
+          setTimeout(() => {
+            statusDiv.style.display = 'none';
+            progressFill.style.width = '0%';
+          }, 3000);
+        } else {
+          progressText.textContent = `Checking for updates... ${Math.round(progress)}%`;
+        }
+      }, 400);
+    }
+
+    function backupConfiguration() {
+      const backup = {
+        timestamp: new Date().toISOString(),
+        settings: settingsState,
+        version: 'v2.4.1'
+      };
+
+      const dataStr = JSON.stringify(backup, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `tsa-config-backup-${new Date().getTime()}.json`;
+      link.click();
+
+      showToast('Configuration backed up successfully', 'success');
+    }
+
+    function factoryReset() {
+      if (confirm('⚠️ This will reset all settings to factory defaults. Are you sure?')) {
+        if (confirm('This action cannot be undone. Click OK to confirm.')) {
+          settingsState.connection = {};
+          settingsState.wifi = {};
+          settingsState.security = {};
+          settingsState.admin = {};
+          settingsState.portRules = [];
+          renderPortTable();
+          showToast('Factory reset completed', 'success');
+        }
+      }
+    }
+
+    // ===== COMMON FUNCTIONS =====
+    function saveSettings(category) {
+      // Collect form data based on category
+      const formData = {};
+
+      if (category === 'connection') {
+        formData.connectionType = document.getElementById('connectionType').value;
+        formData.primaryDns = document.getElementById('primaryDns').value;
+        formData.secondaryDns = document.getElementById('secondaryDns').value;
+        formData.dhcpEnabled = document.getElementById('dhcpEnabled').checked;
+      } else if (category === 'wifi') {
+        formData.ssid24 = document.getElementById('ssid24').value;
+        formData.security24 = document.getElementById('security24').value;
+        formData.ssid5 = document.getElementById('ssid5').value;
+        formData.security5 = document.getElementById('security5').value;
+        formData.guestNetworkEnabled = document.getElementById('guestNetworkEnabled').checked;
+      } else if (category === 'security') {
+        formData.portRules = settingsState.portRules;
+        formData.vpnEnabled = document.getElementById('vpnEnabled').checked;
+      } else if (category === 'admin') {
+        formData.timestamp = new Date().toISOString();
+      }
+
+      settingsState[category] = formData;
+
+      // Simulate API call
+      setTimeout(() => {
+        showToast(`${category.charAt(0).toUpperCase() + category.slice(1)} settings saved successfully`, 'success');
+      }, 500);
+    }
+
+    function resetSettings(category) {
+      if (confirm('Reset settings to last saved state?')) {
+        settingsState[category] = {};
+        showToast(`${category.charAt(0).toUpperCase() + category.slice(1)} settings reset`, 'success');
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type === 'error' ? 'error' : ''}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = 'slideUp 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // ===== SIDEBAR SEARCH =====
+    document.getElementById('sidebarSearch').addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase();
+      document.querySelectorAll('.sidebar-category').forEach(cat => {
+        const text = cat.textContent.toLowerCase();
+        cat.style.display = text.includes(query) ? '' : 'none';
+      });
+    });
+
+    // ===== INITIALIZE =====
+    renderPortTable();
+  </script>
+</body>
+</html>

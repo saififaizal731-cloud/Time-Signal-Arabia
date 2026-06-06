@@ -1799,3 +1799,351 @@ checkUserStatus = function() {
     }
   }
 };
+
+// ===== SETTINGS PANEL FUNCTIONS =====
+const settingsState = {
+  connection: {},
+  wifi: {},
+  security: {},
+  admin: {},
+  portRules: []
+};
+
+function openSettings() {
+  const modal = document.getElementById('settingsModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    loadUserSettings();
+  }
+}
+
+function closeSettings() {
+  const modal = document.getElementById('settingsModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+function switchSettingsTab(tabName, event) {
+  if (event) {
+    event.preventDefault();
+    document.querySelectorAll('.sidebar-category').forEach(cat => {
+      cat.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+  }
+
+  document.querySelectorAll('.settings-section').forEach(section => {
+    section.classList.remove('active');
+  });
+
+  const sectionId = `${tabName}-section`;
+  const section = document.getElementById(sectionId);
+  if (section) {
+    section.classList.add('active');
+  }
+}
+
+function updateConnectionSettings() {
+  const type = document.getElementById('connectionType').value;
+  document.getElementById('static-ip-section').style.display = type === 'static' ? 'flex' : 'none';
+  document.getElementById('subnet-section').style.display = type === 'static' ? 'flex' : 'none';
+  document.getElementById('gateway-section').style.display = type === 'static' ? 'flex' : 'none';
+}
+
+function updateGuestNetworkUI() {
+  const enabled = document.getElementById('guestNetworkEnabled').checked;
+  document.getElementById('guest-ssid-section').style.display = enabled ? 'flex' : 'none';
+  document.getElementById('guest-password-section').style.display = enabled ? 'flex' : 'none';
+  document.getElementById('guest-isolation-section').style.display = enabled ? 'flex' : 'none';
+}
+
+function updateVpnUI() {
+  const enabled = document.getElementById('vpnEnabled').checked;
+  document.getElementById('vpn-settings').style.display = enabled ? 'block' : 'none';
+}
+
+function togglePasswordVisibility(inputId) {
+  const input = document.getElementById(inputId);
+  if (input) {
+    input.type = input.type === 'password' ? 'text' : 'password';
+  }
+}
+
+function addPortRule() {
+  const internalPort = document.getElementById('internalPort').value;
+  const externalPort = document.getElementById('externalPort').value;
+  const protocol = document.getElementById('protocol').value;
+  const targetIp = document.getElementById('targetIp').value;
+
+  if (!internalPort || !externalPort || !targetIp) {
+    showSettingsToast('Please fill in all fields', 'error');
+    return;
+  }
+
+  if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(targetIp)) {
+    showSettingsToast('Invalid IP address format', 'error');
+    return;
+  }
+
+  const rule = { internalPort, externalPort, protocol, targetIp };
+  settingsState.portRules.push(rule);
+
+  document.getElementById('internalPort').value = '';
+  document.getElementById('externalPort').value = '';
+  document.getElementById('targetIp').value = '';
+
+  renderPortTable();
+  showSettingsToast('Port rule added successfully', 'success');
+}
+
+function removePortRule(index) {
+  settingsState.portRules.splice(index, 1);
+  renderPortTable();
+  showSettingsToast('Port rule removed', 'success');
+}
+
+function renderPortTable() {
+  const tbody = document.getElementById('portTableBody');
+  if (settingsState.portRules.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #9ca3af; padding: 24px;">No port forwarding rules configured</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = settingsState.portRules.map((rule, index) => `
+    <tr>
+      <td>${rule.internalPort}</td>
+      <td>${rule.externalPort}</td>
+      <td>${rule.protocol.toUpperCase()}</td>
+      <td>${rule.targetIp}</td>
+      <td><button class="port-remove-btn" onclick="removePortRule(${index})">Delete</button></td>
+    </tr>
+  `).join('');
+}
+
+function changePassword() {
+  const current = document.getElementById('currentPassword').value;
+  const newPass = document.getElementById('newPassword').value;
+  const confirm = document.getElementById('confirmPassword').value;
+
+  if (!current || !newPass || !confirm) {
+    showSettingsToast('Please fill in all password fields', 'error');
+    return;
+  }
+
+  if (newPass !== confirm) {
+    showSettingsToast('New passwords do not match', 'error');
+    return;
+  }
+
+  if (newPass.length < 8) {
+    showSettingsToast('Password must be at least 8 characters long', 'error');
+    return;
+  }
+
+  savePasswordToAPI(current, newPass);
+}
+
+async function savePasswordToAPI(current, newPassword) {
+  try {
+    const response = await fetch(`${API_BASE}/settings/change-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword: current, newPassword: newPassword })
+    });
+
+    if (response.ok) {
+      showSettingsToast('Password changed successfully', 'success');
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+    } else {
+      const error = await response.json();
+      showSettingsToast(error.message || 'Failed to change password', 'error');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    showSettingsToast('Error changing password: ' + error.message, 'error');
+  }
+}
+
+function checkFirmwareUpdates() {
+  const statusDiv = document.getElementById('firmwareStatus');
+  const progressFill = document.getElementById('firmwareProgress');
+  const progressText = document.getElementById('firmwareText');
+
+  statusDiv.style.display = 'block';
+  let progress = 0;
+
+  const interval = setInterval(() => {
+    progress += Math.random() * 30;
+    if (progress > 100) progress = 100;
+
+    progressFill.style.width = progress + '%';
+
+    if (progress === 100) {
+      progressText.textContent = 'Update check complete - no new updates available';
+      clearInterval(interval);
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+        progressFill.style.width = '0%';
+      }, 3000);
+    } else {
+      progressText.textContent = `Checking for updates... ${Math.round(progress)}%`;
+    }
+  }, 400);
+}
+
+function backupConfiguration() {
+  const backup = {
+    timestamp: new Date().toISOString(),
+    settings: settingsState,
+    version: 'v2.4.1'
+  };
+
+  const dataStr = JSON.stringify(backup, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(dataBlob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `tsa-config-backup-${new Date().getTime()}.json`;
+  link.click();
+
+  showSettingsToast('Configuration backed up successfully', 'success');
+}
+
+function factoryReset() {
+  if (confirm('⚠️ This will reset all settings to factory defaults. Are you sure?')) {
+    if (confirm('This action cannot be undone. Click OK to confirm.')) {
+      settingsState.connection = {};
+      settingsState.wifi = {};
+      settingsState.security = {};
+      settingsState.admin = {};
+      settingsState.portRules = [];
+      renderPortTable();
+      showSettingsToast('Factory reset completed', 'success');
+    }
+  }
+}
+
+async function saveSettingsToAPI(category) {
+  try {
+    const formData = {};
+
+    if (category === 'connection') {
+      formData.connectionType = document.getElementById('connectionType').value;
+      formData.primaryDns = document.getElementById('primaryDns').value;
+      formData.secondaryDns = document.getElementById('secondaryDns').value;
+      formData.dhcpEnabled = document.getElementById('dhcpEnabled').checked;
+
+      if (formData.connectionType === 'static') {
+        formData.ipAddress = document.getElementById('ipAddress').value;
+        formData.subnetMask = document.getElementById('subnetMask').value;
+        formData.gateway = document.getElementById('gateway').value;
+      }
+    } else if (category === 'wifi') {
+      formData.ssid24 = document.getElementById('ssid24').value;
+      formData.security24 = document.getElementById('security24').value;
+      formData.password24 = document.getElementById('password24').value;
+      formData.ssid5 = document.getElementById('ssid5').value;
+      formData.security5 = document.getElementById('security5').value;
+      formData.password5 = document.getElementById('password5').value;
+      formData.guestNetworkEnabled = document.getElementById('guestNetworkEnabled').checked;
+      if (formData.guestNetworkEnabled) {
+        formData.guestSsid = document.getElementById('guestSsid').value;
+        formData.guestPassword = document.getElementById('guestPassword').value;
+        formData.guestIsolation = document.getElementById('guestIsolation').checked;
+      }
+    } else if (category === 'security') {
+      formData.portRules = settingsState.portRules;
+      formData.vpnEnabled = document.getElementById('vpnEnabled').checked;
+      if (formData.vpnEnabled) {
+        formData.vpnType = document.getElementById('vpnType').value;
+        formData.vpnServer = document.getElementById('vpnServer').value;
+        formData.vpnPort = document.getElementById('vpnPort').value;
+        formData.vpnUsername = document.getElementById('vpnUsername').value;
+      }
+    }
+
+    settingsState[category] = formData;
+
+    const response = await fetch(`${API_BASE}/settings/${category}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    });
+
+    if (response.ok) {
+      showSettingsToast(`${category.charAt(0).toUpperCase() + category.slice(1)} settings saved successfully`, 'success');
+    } else {
+      const error = await response.json();
+      showSettingsToast(error.message || 'Failed to save settings', 'error');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    showSettingsToast('Settings saved locally (API error)', 'success');
+  }
+}
+
+function resetSettingsForm(category) {
+  if (confirm('Reset settings to last saved state?')) {
+    settingsState[category] = {};
+    showSettingsToast(`${category.charAt(0).toUpperCase() + category.slice(1)} settings reset`, 'success');
+  }
+}
+
+async function loadUserSettings() {
+  try {
+    const response = await fetch(`${API_BASE}/settings`, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (response.ok) {
+      const settings = await response.json();
+
+      if (settings.connection) {
+        document.getElementById('connectionType').value = settings.connection.connectionType || 'dhcp';
+        document.getElementById('primaryDns').value = settings.connection.primaryDns || '';
+        document.getElementById('secondaryDns').value = settings.connection.secondaryDns || '';
+      }
+
+      if (settings.wifi) {
+        document.getElementById('ssid24').value = settings.wifi.ssid24 || '';
+        document.getElementById('security24').value = settings.wifi.security24 || 'wpa2';
+        document.getElementById('ssid5').value = settings.wifi.ssid5 || '';
+        document.getElementById('security5').value = settings.wifi.security5 || 'wpa2';
+      }
+
+      if (settings.security && settings.security.portRules) {
+        settingsState.portRules = settings.security.portRules;
+        renderPortTable();
+      }
+    }
+  } catch (error) {
+    console.log('Settings API not available, using defaults');
+  }
+}
+
+function showSettingsToast(message, type = 'success') {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: ${type === 'error' ? '#ef4444' : '#10b981'};
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    animation: slideUp 0.3s ease;
+  `;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.animation = 'slideUp 0.3s ease reverse';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+};

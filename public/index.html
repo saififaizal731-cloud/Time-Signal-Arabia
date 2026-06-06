@@ -29,6 +29,7 @@
             <a href="#wishlist" class="icon-link">❤️ Wishlist</a>
             <a href="#cart" class="icon-link" onclick="openCart()">🛒 Cart <span id="cartCount" class="badge">0</span></a>
             <a href="#account" class="icon-link" onclick="openAccount()">👤 Account</a>
+            <a href="#settings" class="icon-link settings-icon-link" onclick="openSettings()" style="margin-left: auto; background: #10b981; padding: 8px 16px; border-radius: 6px; font-weight: bold; color: white; transition: all 0.2s;">⚙️ Settings</a>
           </div>
         </div>
       </div>
@@ -317,6 +318,414 @@
       </div>
       <div id="adminContent">
         <!-- Dynamic content loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Panel Modal -->
+  <div id="settingsModal" class="modal settings-modal" style="display: none;">
+    <div class="settings-modal-container">
+      <div class="settings-sidebar">
+        <div class="settings-header-close">
+          <span class="close-settings" onclick="closeSettings()">&times;</span>
+        </div>
+
+        <div class="sidebar-search">
+          <input type="text" id="sidebarSearch" placeholder="Search settings...">
+        </div>
+
+        <div class="sidebar-category active" onclick="switchSettingsTab('connection', event)">
+          <span class="sidebar-category-icon">🌐</span>
+          <span>Connection</span>
+        </div>
+
+        <div class="sidebar-category" onclick="switchSettingsTab('wifi', event)">
+          <span class="sidebar-category-icon">📡</span>
+          <span>Wi-Fi Settings</span>
+        </div>
+
+        <div class="sidebar-category" onclick="switchSettingsTab('security', event)">
+          <span class="sidebar-category-icon">🔐</span>
+          <span>Security & Firewall</span>
+        </div>
+
+        <div class="sidebar-category" onclick="switchSettingsTab('admin', event)">
+          <span class="sidebar-category-icon">⚙️</span>
+          <span>System Admin</span>
+        </div>
+      </div>
+
+      <div class="settings-main">
+        <div class="settings-header">
+          <h1>Settings</h1>
+          <p>Manage your network and system preferences</p>
+        </div>
+
+        <!-- Connection Section -->
+        <div class="settings-section active" id="connection-section">
+          <div class="settings-group">
+            <div class="settings-group-title">
+              <span class="settings-group-title-icon">🌐</span>
+              Connection Settings
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Internet Connection Type</label>
+              <select class="settings-select" id="connectionType" onchange="updateConnectionSettings()">
+                <option value="dhcp">DHCP (Automatic IP)</option>
+                <option value="static">Static IP</option>
+                <option value="pppoe">PPPoE</option>
+              </select>
+            </div>
+
+            <div class="settings-item" id="static-ip-section" style="display: none;">
+              <label class="settings-label">IP Address</label>
+              <input type="text" class="settings-input" placeholder="e.g., 192.168.1.100" id="ipAddress">
+            </div>
+
+            <div class="settings-item" id="subnet-section" style="display: none;">
+              <label class="settings-label">Subnet Mask</label>
+              <input type="text" class="settings-input" placeholder="e.g., 255.255.255.0" id="subnetMask">
+            </div>
+
+            <div class="settings-item" id="gateway-section" style="display: none;">
+              <label class="settings-label">Default Gateway</label>
+              <input type="text" class="settings-input" placeholder="e.g., 192.168.1.1" id="gateway">
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Primary DNS</label>
+              <input type="text" class="settings-input" placeholder="e.g., 8.8.8.8" id="primaryDns">
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Secondary DNS</label>
+              <input type="text" class="settings-input" placeholder="e.g., 8.8.4.4" id="secondaryDns">
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-title">
+              <span class="settings-group-title-icon">📶</span>
+              DHCP Server
+            </div>
+
+            <div class="settings-item inline">
+              <label class="settings-label">Enable DHCP Server</label>
+              <label class="toggle-switch">
+                <input type="checkbox" class="toggle-input" id="dhcpEnabled" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">DHCP Pool Start</label>
+              <input type="text" class="settings-input" placeholder="e.g., 192.168.1.100" id="dhcpStart">
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">DHCP Pool End</label>
+              <input type="text" class="settings-input" placeholder="e.g., 192.168.1.200" id="dhcpEnd">
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="saveSettingsToAPI('connection')">💾 Save Changes</button>
+            <button class="btn btn-secondary" onclick="resetSettingsForm('connection')">↻ Reset</button>
+          </div>
+        </div>
+
+        <!-- Wi-Fi Section -->
+        <div class="settings-section" id="wifi-section">
+          <div class="settings-group">
+            <div class="settings-group-title">
+              <span class="settings-group-title-icon">📡</span>
+              2.4GHz Band
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Network Name (SSID)</label>
+              <input type="text" class="settings-input" placeholder="e.g., TSA-Network-24" id="ssid24">
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Security Protocol</label>
+              <select class="settings-select" id="security24">
+                <option value="wpa2">WPA2</option>
+                <option value="wpa3">WPA3</option>
+                <option value="open">Open (Not Recommended)</option>
+              </select>
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Password</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="password" class="settings-input" style="flex: 1;" placeholder="Enter password" id="password24">
+                <button class="btn btn-secondary" onclick="togglePasswordVisibility('password24')">👁️</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-title">
+              <span class="settings-group-title-icon">📡</span>
+              5GHz Band
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Network Name (SSID)</label>
+              <input type="text" class="settings-input" placeholder="e.g., TSA-Network-5" id="ssid5">
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Security Protocol</label>
+              <select class="settings-select" id="security5">
+                <option value="wpa2">WPA2</option>
+                <option value="wpa3">WPA3</option>
+                <option value="open">Open (Not Recommended)</option>
+              </select>
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Password</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="password" class="settings-input" style="flex: 1;" placeholder="Enter password" id="password5">
+                <button class="btn btn-secondary" onclick="togglePasswordVisibility('password5')">👁️</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-title">
+              <span class="settings-group-title-icon">🌐</span>
+              Guest Network
+            </div>
+
+            <div class="settings-item inline">
+              <label class="settings-label">Enable Guest Network</label>
+              <label class="toggle-switch">
+                <input type="checkbox" class="toggle-input" id="guestNetworkEnabled" onchange="updateGuestNetworkUI()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="settings-item" id="guest-ssid-section" style="display: none;">
+              <label class="settings-label">Guest Network SSID</label>
+              <input type="text" class="settings-input" placeholder="e.g., TSA-Guest" id="guestSsid">
+            </div>
+
+            <div class="settings-item" id="guest-password-section" style="display: none;">
+              <label class="settings-label">Guest Network Password</label>
+              <input type="text" class="settings-input" placeholder="Enter password" id="guestPassword">
+            </div>
+
+            <div class="settings-item inline" id="guest-isolation-section" style="display: none;">
+              <label class="settings-label">Network Isolation</label>
+              <label class="toggle-switch">
+                <input type="checkbox" class="toggle-input" id="guestIsolation" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="saveSettingsToAPI('wifi')">💾 Save Changes</button>
+            <button class="btn btn-secondary" onclick="resetSettingsForm('wifi')">↻ Reset</button>
+          </div>
+        </div>
+
+        <!-- Security Section -->
+        <div class="settings-section" id="security-section">
+          <div class="settings-group">
+            <div class="settings-group-title">
+              <span class="settings-group-title-icon">🔌</span>
+              Port Forwarding
+            </div>
+
+            <div class="alert alert-warning">
+              <span>⚠️</span>
+              <span>Configure port forwarding carefully. Improper settings may compromise network security.</span>
+            </div>
+
+            <div class="port-builder">
+              <div class="port-builder-row">
+                <div>
+                  <label class="settings-label">Internal Port</label>
+                  <input type="number" class="settings-input" placeholder="e.g., 80" id="internalPort" min="1" max="65535">
+                </div>
+                <div>
+                  <label class="settings-label">External Port</label>
+                  <input type="number" class="settings-input" placeholder="e.g., 8080" id="externalPort" min="1" max="65535">
+                </div>
+                <div>
+                  <label class="settings-label">Protocol</label>
+                  <select class="settings-select" id="protocol">
+                    <option value="tcp">TCP</option>
+                    <option value="udp">UDP</option>
+                    <option value="both">Both</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="settings-label">Target IP</label>
+                  <input type="text" class="settings-input" placeholder="192.168.1.100" id="targetIp">
+                </div>
+                <button class="btn btn-primary" onclick="addPortRule()">Add</button>
+              </div>
+            </div>
+
+            <table class="port-table">
+              <thead>
+                <tr>
+                  <th>Internal Port</th>
+                  <th>External Port</th>
+                  <th>Protocol</th>
+                  <th>Target IP</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="portTableBody">
+                <tr>
+                  <td colspan="5" style="text-align: center; color: #9ca3af; padding: 24px;">No port forwarding rules configured</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-title">
+              <span class="settings-group-title-icon">🔒</span>
+              VPN Client
+            </div>
+
+            <div class="settings-item inline">
+              <label class="settings-label">Enable VPN Client</label>
+              <label class="toggle-switch">
+                <input type="checkbox" class="toggle-input" id="vpnEnabled" onchange="updateVpnUI()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div style="display: none;" id="vpn-settings">
+              <div class="settings-item">
+                <label class="settings-label">VPN Type</label>
+                <select class="settings-select" id="vpnType">
+                  <option value="openvpn">OpenVPN</option>
+                  <option value="wireguard">WireGuard</option>
+                </select>
+              </div>
+
+              <div class="settings-item">
+                <label class="settings-label">VPN Server Address</label>
+                <input type="text" class="settings-input" placeholder="vpn.example.com" id="vpnServer">
+              </div>
+
+              <div class="settings-item">
+                <label class="settings-label">VPN Port</label>
+                <input type="number" class="settings-input" placeholder="1194" id="vpnPort" min="1" max="65535">
+              </div>
+
+              <div class="settings-item">
+                <label class="settings-label">Username</label>
+                <input type="text" class="settings-input" placeholder="VPN username" id="vpnUsername">
+              </div>
+
+              <div class="settings-item">
+                <label class="settings-label">Password</label>
+                <input type="password" class="settings-input" placeholder="VPN password" id="vpnPassword">
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="saveSettingsToAPI('security')">💾 Save Changes</button>
+            <button class="btn btn-secondary" onclick="resetSettingsForm('security')">↻ Reset</button>
+          </div>
+        </div>
+
+        <!-- Admin Section -->
+        <div class="settings-section" id="admin-section">
+          <div class="settings-group">
+            <div class="settings-group-title">
+              <span class="settings-group-title-icon">🔑</span>
+              Admin Password
+            </div>
+
+            <div class="alert alert-warning">
+              <span>⚠️</span>
+              <span>Use a strong password combining uppercase, lowercase, numbers, and symbols.</span>
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Current Password</label>
+              <input type="password" class="settings-input" placeholder="Enter current password" id="currentPassword">
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">New Password</label>
+              <input type="password" class="settings-input" placeholder="Enter new password" id="newPassword">
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Confirm New Password</label>
+              <input type="password" class="settings-input" placeholder="Confirm new password" id="confirmPassword">
+            </div>
+
+            <button class="btn btn-primary" onclick="changePassword()" style="margin-top: 12px;">🔑 Change Password</button>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-title">
+              <span class="settings-group-title-icon">📦</span>
+              Firmware Update
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Current Firmware Version</label>
+              <div style="padding: 10px 12px; background: #0f172a; border-radius: 6px; color: #10b981; font-weight: 500;">
+                v2.4.1 (Latest)
+              </div>
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Check for Updates</label>
+              <button class="btn btn-secondary" onclick="checkFirmwareUpdates()">🔄 Check Now</button>
+            </div>
+
+            <div id="firmwareStatus" style="display: none;">
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" id="firmwareProgress" style="width: 0%;"></div>
+                </div>
+                <div class="progress-text" id="firmwareText">Preparing update...</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-title">
+              <span class="settings-group-title-icon">💾</span>
+              Backup & Restore
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Backup Configuration</label>
+              <p style="font-size: 13px; color: #9ca3af; margin-bottom: 12px;">Download a backup of your current settings</p>
+              <button class="btn btn-primary" onclick="backupConfiguration()">⬇️ Download Backup</button>
+            </div>
+
+            <div class="settings-item">
+              <label class="settings-label">Restore Configuration</label>
+              <p style="font-size: 13px; color: #9ca3af; margin-bottom: 12px;">Restore settings from a previously saved backup</p>
+              <input type="file" id="restoreFile" accept=".json" style="display: none;">
+              <button class="btn btn-secondary" onclick="document.getElementById('restoreFile').click()">📂 Choose File</button>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="saveSettingsToAPI('admin')">💾 Save Changes</button>
+            <button class="btn btn-danger" onclick="factoryReset()">🔄 Factory Reset</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
