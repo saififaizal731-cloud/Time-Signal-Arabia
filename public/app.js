@@ -6,6 +6,36 @@ let currentCart = null;
 let currentProducts = [];
 let selectedProductId = null;
 
+// Toast Notification
+function showToast(message, type = 'success') {
+  const toast = document.createElement('div');
+  const backgroundColor = type === 'error' ? '#ef4444' : (type === 'warning' ? '#f59e0b' : '#10b981');
+
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: ${backgroundColor};
+    color: white;
+    padding: 14px 20px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    font-size: 14px;
+    max-width: 300px;
+    word-wrap: break-word;
+    animation: slideIn 0.3s ease-out;
+  `;
+
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.animation = 'slideOut 0.3s ease-out';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
   loadProducts();
@@ -204,15 +234,18 @@ async function addToCart() {
 // Quick Add to Cart
 async function quickAddToCart(productId) {
   try {
+    // Fetch product details
+    const productResponse = await fetch(`${API_BASE}/products/${productId}`);
+    if (!productResponse.ok) {
+      showToast('Product not found', 'error');
+      return;
+    }
+
+    const product = await productResponse.json();
+
     // If user not logged in, save to localStorage
     if (!currentUser) {
       let guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
-
-      // Find product details from grid
-      const productCard = event.target.closest('.product-card');
-      const productName = productCard?.querySelector('.product-name')?.textContent || 'Product';
-      const productPrice = parseFloat(productCard?.querySelector('.product-price')?.textContent) || 0;
-      const productImage = productCard?.querySelector('img')?.src || '';
 
       const existingItem = guestCart.find(item => item.productId === productId);
       if (existingItem) {
@@ -221,14 +254,14 @@ async function quickAddToCart(productId) {
         guestCart.push({
           productId: productId,
           quantity: 1,
-          name: productName,
-          price: productPrice,
-          image: productImage
+          name: product.name,
+          price: product.price,
+          image: product.image
         });
       }
 
       localStorage.setItem('guestCart', JSON.stringify(guestCart));
-      showToast('✓ Product added to cart!', 'success');
+      showToast('✓ ' + product.name + ' added to cart!', 'success');
       updateGuestCartCount();
       return;
     }
@@ -245,11 +278,14 @@ async function quickAddToCart(productId) {
     });
 
     if (response.ok) {
-      showToast('✓ Product added to cart!', 'success');
+      showToast('✓ ' + product.name + ' added to cart!', 'success');
       loadCart();
+    } else {
+      showToast('Error adding to cart', 'error');
     }
   } catch (error) {
     console.error('Error:', error);
+    showToast('Error adding to cart', 'error');
   }
 }
 
@@ -357,24 +393,60 @@ async function removeFromCart(productId) {
 // Checkout
 function checkout() {
   if (!currentCart || currentCart.items.length === 0) {
-    alert('Cart is empty');
+    showToast('Cart is empty', 'error');
     return;
   }
 
-  // REQUIRE LOGIN FOR CHECKOUT
-  if (!currentUser) {
-    alert('Please login or register to proceed with checkout');
-    closeCartModal();
-    openAccount();
-    return;
-  }
+  // Load cart to ensure we have latest data
+  loadCart();
 
   // If user is logged in, merge guest cart if exists
-  if (currentUser) {
+  if (currentUser && localStorage.getItem('guestCart')) {
     mergeGuestCartToUser();
   }
 
-  document.getElementById('checkoutTotal').textContent = `Total: ${currentCart.total} SAR`;
+  // Populate checkout form
+  const subtotal = currentCart.total || 0;
+  const tax = subtotal * 0.15;
+  const shipping = 0;
+  const grandTotal = subtotal + tax + shipping;
+
+  // Populate order summary
+  const itemsHtml = currentCart.items.map(item => `
+    <div class="checkout-item">
+      <span class="item-name">${item.productId?.name || item.name || 'Product'}</span>
+      <span class="item-qty">× ${item.quantity}</span>
+      <span class="item-price">${(item.price * item.quantity).toFixed(2)} SAR</span>
+    </div>
+  `).join('');
+
+  const checkoutItemsDiv = document.getElementById('checkoutItems');
+  if (checkoutItemsDiv) {
+    checkoutItemsDiv.innerHTML = itemsHtml;
+  }
+
+  // Update totals
+  const subtotalEl = document.getElementById('checkoutSubtotal');
+  const taxEl = document.getElementById('checkoutTax');
+  const shippingEl = document.getElementById('checkoutShipping');
+  const totalEl = document.getElementById('checkoutGrandTotal');
+
+  if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2) + ' SAR';
+  if (taxEl) taxEl.textContent = tax.toFixed(2) + ' SAR';
+  if (shippingEl) shippingEl.textContent = 'Free';
+  if (totalEl) totalEl.textContent = grandTotal.toFixed(2) + ' SAR';
+
+  // Pre-fill user info if logged in
+  if (currentUser) {
+    const nameEl = document.getElementById('customerName');
+    const emailEl = document.getElementById('customerEmail');
+    const phoneEl = document.getElementById('phoneNumber');
+
+    if (nameEl) nameEl.value = currentUser.name || '';
+    if (emailEl) emailEl.value = currentUser.email || '';
+    if (phoneEl) phoneEl.value = currentUser.phone || '';
+  }
+
   document.getElementById('checkoutModal').style.display = 'block';
   closeCartModal();
 }
@@ -413,33 +485,68 @@ async function mergeGuestCartToUser() {
 async function placeOrder(event) {
   event.preventDefault();
 
-  const shippingAddress = document.getElementById('shippingAddress').value;
-  const phone = document.getElementById('phoneNumber').value;
-
-  if (!shippingAddress || !phone) {
-    alert('Please fill in all fields');
-    return;
-  }
-
   try {
+    // Merge guest cart to user if needed
+    if (!currentUser && localStorage.getItem('guestCart')) {
+      await mergeGuestCartToUser();
+    }
+
+    // Get form data
+    const customerName = document.getElementById('customerName')?.value || (currentUser?.name || '');
+    const customerEmail = document.getElementById('customerEmail')?.value || (currentUser?.email || '');
+    const phoneNumber = document.getElementById('phoneNumber')?.value || '';
+    const shippingAddress = document.getElementById('shippingAddress')?.value || '';
+    const shippingMethod = document.getElementById('shippingMethod')?.value || 'free-madinah';
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'bank-transfer';
+
+    if (!customerName || !customerEmail || !phoneNumber || !shippingAddress) {
+      showToast('Please fill in all required fields', 'error');
+      return;
+    }
+
+    if (!currentCart || currentCart.items.length === 0) {
+      showToast('Your cart is empty', 'error');
+      return;
+    }
+
+    const subtotal = currentCart.total || 0;
+    const tax = subtotal * 0.15;
+    const shipping = 0;
+    const totalAmount = subtotal + tax + shipping;
+
     const response = await fetch(`${API_BASE}/orders/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        userId: currentUser._id,
-        shippingAddress: shippingAddress,
+        userId: currentUser?._id || 'guest_' + Date.now(),
+        customerName,
+        customerEmail,
+        phoneNumber,
+        shippingAddress,
+        shippingMethod,
+        paymentMethod,
+        subtotal,
+        tax,
+        shippingCost: shipping,
+        totalAmount,
+        paymentStatus: paymentMethod === 'bank-transfer' ? 'pending' : 'completed'
       }),
     });
 
     if (response.ok) {
       const order = await response.json();
-      alert(`Order placed successfully! Order Number: ${order.orderNumber}`);
+      showToast('✓ Order placed successfully!', 'success');
+      localStorage.removeItem('guestCart');
       loadCart();
       closeCheckoutModal();
+      setTimeout(() => window.location.reload(), 1500);
+    } else {
+      const error = await response.json();
+      showToast(error.message || 'Error placing order', 'error');
     }
   } catch (error) {
-    console.error('Error:', error);
-    alert('Error placing order');
+    console.error('Error placing order:', error);
+    showToast('Error placing order: ' + error.message, 'error');
   }
 }
 

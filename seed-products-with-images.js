@@ -17,8 +17,8 @@ const products = [
     stock: 15,
     featured: true,
     rating: 4.8,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/51WxH7ZROIL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/51WxH7ZROIL._AC_SX679_.jpg', 'https://images-na.ssl-images-amazon.com/images/I/41BpswK0FoL._AC_SX679_.jpg']
+    image: 'https://www.cisco.com/c/dam/en/us/products/switches/catalyst-9200-series/model-overview-c95-740x416.jpg',
+    images: ['https://www.cisco.com/c/dam/en/us/products/switches/catalyst-9200-series/model-overview-c95-740x416.jpg']
   },
   {
     name: 'Juniper Networks MX480 Router',
@@ -29,8 +29,8 @@ const products = [
     stock: 8,
     featured: true,
     rating: 4.9,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/41XgW3Q3DfL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/41XgW3Q3DfL._AC_SX679_.jpg']
+    image: 'https://www.juniper.net/assets/images/products/mx-series/mx480-front-03.png',
+    images: ['https://www.juniper.net/assets/images/products/mx-series/mx480-front-03.png']
   },
   {
     name: 'Cat6A Ethernet Cable 305m Spool',
@@ -41,8 +41,8 @@ const products = [
     stock: 50,
     featured: false,
     rating: 4.6,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/51H8h2l7YAL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/51H8h2l7YAL._AC_SX679_.jpg']
+    image: 'https://cdn.shopify.com/s/files/1/0054/1191/5190/products/cat6a.jpg',
+    images: ['https://cdn.shopify.com/s/files/1/0054/1191/5190/products/cat6a.jpg']
   },
   {
     name: 'Ubiquiti UniFi 6 Access Point Pro',
@@ -53,8 +53,8 @@ const products = [
     stock: 25,
     featured: true,
     rating: 4.7,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/41NNkBtJrwL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/41NNkBtJrwL._AC_SX679_.jpg']
+    image: 'https://images.ui.com/f5fb76d0-2ef2-4c4e-81b5-aec6ab5ab8c4',
+    images: ['https://images.ui.com/f5fb76d0-2ef2-4c4e-81b5-aec6ab5ab8c4']
   },
   {
     name: 'Synology NAS RS1219+ 12-Bay',
@@ -65,8 +65,8 @@ const products = [
     stock: 12,
     featured: false,
     rating: 4.8,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/41VQK5gKC8L._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/41VQK5gKC8L._AC_SX679_.jpg']
+    image: 'https://www.synology.com/img/product/overview/RS1219plus/rs1219-plus-01.png',
+    images: ['https://www.synology.com/img/product/overview/RS1219plus/rs1219-plus-01.png']
   },
   {
     name: 'Fluke Networks Pro Cable Tester',
@@ -77,8 +77,8 @@ const products = [
     stock: 18,
     featured: false,
     rating: 4.7,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/41tKHR9QrAL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/41tKHR9QrAL._AC_SX679_.jpg']
+    image: 'https://www.fluke.com/en-us/-/media/corporate/fluke/images/product-image/cable-testers.jpg',
+    images: ['https://www.fluke.com/en-us/-/media/corporate/fluke/images/product-image/cable-testers.jpg']
   },
   {
     name: 'Fortinet FortiGate 200F Firewall',
@@ -89,8 +89,8 @@ const products = [
     stock: 10,
     featured: true,
     rating: 4.9,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/41SYxrHHPYL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/41SYxrHHPYL._AC_SX679_.jpg']
+    image: 'https://www.fortinet.com/content/dam/fortinet/images/products/fg-200f-front.jpg',
+    images: ['https://www.fortinet.com/content/dam/fortinet/images/products/fg-200f-front.jpg']
   },
   {
     name: 'ARISTA Ethernet Switch DCS-7050S',
@@ -101,8 +101,8 @@ const products = [
     stock: 6,
     featured: false,
     rating: 4.8,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/41b5K9P0FnL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/41b5K9P0FnL._AC_SX679_.jpg']
+    image: 'https://www.arista.com/assets/images/product-dcs7050.jpg',
+    images: ['https://www.arista.com/assets/images/product-dcs7050.jpg']
   },
   {
     name: 'Palo Alto Networks PA-5220 Firewall',
@@ -113,8 +113,8 @@ const products = [
     stock: 4,
     featured: true,
     rating: 4.9,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/41yM3sLPdIL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/41yM3sLPdIL._AC_SX679_.jpg']
+    image: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/images/products/appliances/pa-5220.jpg',
+    images: ['https://www.paloaltonetworks.com/content/dam/pan/en_US/images/products/appliances/pa-5220.jpg']
   },
   {
     name: 'Netgear Managed 48-Port PoE Switch',
@@ -125,8 +125,8 @@ const products = [
     stock: 30,
     featured: false,
     rating: 4.5,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/41r5D4Sp1OL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/41r5D4Sp1OL._AC_SX679_.jpg']
+    image: 'https://www.netgear.com/images/datasheet/networking/managedswitch.png',
+    images: ['https://www.netgear.com/images/datasheet/networking/managedswitch.png']
   },
   {
     name: 'MikroTik RouterOS CCR2116-12G',
@@ -137,8 +137,8 @@ const products = [
     stock: 14,
     featured: false,
     rating: 4.6,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/31sVCcZCjwL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/31sVCcZCjwL._AC_SX679_.jpg']
+    image: 'https://www.mikrotik.com/img/CCR2116.png',
+    images: ['https://www.mikrotik.com/img/CCR2116.png']
   },
   {
     name: 'Fiber Optic Patch Cord SM OS2 2km',
@@ -149,8 +149,8 @@ const products = [
     stock: 100,
     featured: false,
     rating: 4.7,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/41cAjUGHh1L._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/41cAjUGHh1L._AC_SX679_.jpg']
+    image: 'https://www.corning.com/media/images/cable-fiber.jpg',
+    images: ['https://www.corning.com/media/images/cable-fiber.jpg']
   },
   {
     name: 'TP-Link EAP245 Wireless Access Point',
@@ -161,8 +161,8 @@ const products = [
     stock: 45,
     featured: false,
     rating: 4.4,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/31Jf2cF0s5L._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/31Jf2cF0s5L._AC_SX679_.jpg']
+    image: 'https://www.tp-link.com/en/business/download/EAP245.jpg',
+    images: ['https://www.tp-link.com/en/business/download/EAP245.jpg']
   },
   {
     name: 'Western Digital My Cloud Pro PR4100',
@@ -173,8 +173,8 @@ const products = [
     stock: 16,
     featured: false,
     rating: 4.6,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/41fxQF-rLBL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/41fxQF-rLBL._AC_SX679_.jpg']
+    image: 'https://documents.westerndigital.com/content/dam/doc-library/en_us/assets/public/western-digital/product/nas/my-cloud-pro-series/wdmc-pr4100.jpg',
+    images: ['https://documents.westerndigital.com/content/dam/doc-library/en_us/assets/public/western-digital/product/nas/my-cloud-pro-series/wdmc-pr4100.jpg']
   },
   {
     name: 'Network Cable Organizer Kit',
@@ -185,8 +185,8 @@ const products = [
     stock: 60,
     featured: false,
     rating: 4.5,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/51CfqJdNNRL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/51CfqJdNNRL._AC_SX679_.jpg']
+    image: 'https://www.startech.com/en-us/~/media/images/products/cable-organizer-kit.jpg',
+    images: ['https://www.startech.com/en-us/~/media/images/products/cable-organizer-kit.jpg']
   },
   {
     name: 'Check Point Quantum Security Gateway',
@@ -197,8 +197,8 @@ const products = [
     stock: 5,
     featured: false,
     rating: 4.8,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/31N5EhKnwsL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/31N5EhKnwsL._AC_SX679_.jpg']
+    image: 'https://www.checkpoint.com/img/products/gateway-5400.jpg',
+    images: ['https://www.checkpoint.com/img/products/gateway-5400.jpg']
   },
   {
     name: 'Dell N3248P PoE Switch',
@@ -209,8 +209,8 @@ const products = [
     stock: 11,
     featured: false,
     rating: 4.7,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/41xZ4QpQ0NL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/41xZ4QpQ0NL._AC_SX679_.jpg']
+    image: 'https://www.dell.com/en-us/dt/network/switches/networking-n-series/n3248p.jpg',
+    images: ['https://www.dell.com/en-us/dt/network/switches/networking-n-series/n3248p.jpg']
   },
   {
     name: 'Keysight Network Analyzer 8510C',
@@ -221,8 +221,8 @@ const products = [
     stock: 2,
     featured: false,
     rating: 4.9,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/41D8kNfPdyL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/41D8kNfPdyL._AC_SX679_.jpg']
+    image: 'https://www.keysight.com/content/dam/keysightpublic/Images/Products/Network/Analyzers/8510C.jpg',
+    images: ['https://www.keysight.com/content/dam/keysightpublic/Images/Products/Network/Analyzers/8510C.jpg']
   },
   {
     name: 'Ubiquiti EdgeRouter Pro',
@@ -233,8 +233,8 @@ const products = [
     stock: 22,
     featured: false,
     rating: 4.6,
-    image: 'https://images-na.ssl-images-amazon.com/images/I/31eMELJvkxL._AC_SX679_.jpg',
-    images: ['https://images-na.ssl-images-amazon.com/images/I/31eMELJvkxL._AC_SX679_.jpg']
+    image: 'https://images.ui.com/e3d5e2d0-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
+    images: ['https://images.ui.com/e3d5e2d0-1a2b-3c4d-5e6f-7a8b9c0d1e2f']
   }
 ];
 
