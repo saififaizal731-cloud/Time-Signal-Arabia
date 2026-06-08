@@ -6,34 +6,80 @@ let currentCart = null;
 let currentProducts = [];
 let selectedProductId = null;
 
-// Toast Notification
+// Enhanced Toast Notification with Professional Design
 function showToast(message, type = 'success') {
   const toast = document.createElement('div');
-  const backgroundColor = type === 'error' ? '#ef4444' : (type === 'warning' ? '#f59e0b' : '#10b981');
+  const colors = {
+    success: '#10b981',
+    error: '#ef4444',
+    warning: '#f59e0b',
+    info: '#3b82f6'
+  };
+  const backgroundColor = colors[type] || colors.success;
+  const icons = {
+    success: '✓',
+    error: '✕',
+    warning: '⚠',
+    info: 'ℹ'
+  };
+  const icon = icons[type] || '✓';
 
   toast.style.cssText = `
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 24px;
+    right: 24px;
     background: ${backgroundColor};
     color: white;
     padding: 14px 20px;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     z-index: 10000;
     font-size: 14px;
-    max-width: 300px;
+    font-weight: 500;
+    max-width: 350px;
     word-wrap: break-word;
-    animation: slideIn 0.3s ease-out;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   `;
 
-  toast.textContent = message;
+  toast.innerHTML = `<span style="font-weight: 700; font-size: 16px;">${icon}</span><span>${message}</span>`;
   document.body.appendChild(toast);
 
   setTimeout(() => {
-    toast.style.animation = 'slideOut 0.3s ease-out';
+    toast.style.animation = 'slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
     setTimeout(() => toast.remove(), 300);
-  }, 3000);
+  }, 3500);
+}
+
+// Add animation styles if not already present
+if (!document.getElementById('toast-animations')) {
+  const style = document.createElement('style');
+  style.id = 'toast-animations';
+  style.textContent = `
+    @keyframes slideInRight {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 }
 
 // Initialize app
