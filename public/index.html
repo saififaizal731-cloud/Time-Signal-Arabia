@@ -40,14 +40,14 @@
 
     <div class="categories-menu">
       <div class="container">
-        <button class="category-btn" onclick="filterByCategory('all')">All Products</button>
-        <button class="category-btn" onclick="filterByCategory('Network Switches')">Network Switches</button>
-        <button class="category-btn" onclick="filterByCategory('Routers & Gateways')">Routers</button>
-        <button class="category-btn" onclick="filterByCategory('Network Cables')">Cables</button>
-        <button class="category-btn" onclick="filterByCategory('Wireless Access Points')">WiFi</button>
-        <button class="category-btn" onclick="filterByCategory('Network Storage')">Storage</button>
-        <button class="category-btn" onclick="filterByCategory('Networking Tools')">Tools</button>
-        <button class="category-btn" onclick="filterByCategory('Security & Firewalls')">Security</button>
+        <button class="category-btn active" id="cat-all" onclick="filterByCategory('all', this)">All Products</button>
+        <button class="category-btn" id="cat-switches" onclick="filterByCategory('Network Switches', this)">🔌 Network Switches</button>
+        <button class="category-btn" id="cat-routers" onclick="filterByCategory('Routers & Gateways', this)">📡 Routers</button>
+        <button class="category-btn" id="cat-cables" onclick="filterByCategory('Network Cables', this)">🔗 Cables</button>
+        <button class="category-btn" id="cat-wifi" onclick="filterByCategory('Wireless Access Points', this)">📶 WiFi</button>
+        <button class="category-btn" id="cat-storage" onclick="filterByCategory('Network Storage', this)">💾 Storage</button>
+        <button class="category-btn" id="cat-tools" onclick="filterByCategory('Networking Tools', this)">🔧 Tools</button>
+        <button class="category-btn" id="cat-security" onclick="filterByCategory('Security & Firewalls', this)">🔒 Security</button>
       </div>
     </div>
   </header>

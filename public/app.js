@@ -837,11 +837,32 @@ function checkUserStatus() {
 }
 
 // Filter & Search Functions
-function filterByCategory(category) {
-  if (category === 'all') {
-    loadProducts();
-  } else {
-    loadProducts({ category });
+// Filter by Category with UI Update
+function filterByCategory(category, buttonElement) {
+  try {
+    // Update active button state
+    const allButtons = document.querySelectorAll('.category-btn');
+    allButtons.forEach(btn => btn.classList.remove('active'));
+
+    if (buttonElement) {
+      buttonElement.classList.add('active');
+    }
+
+    // Load products for the selected category
+    if (category === 'all') {
+      loadProducts();
+    } else {
+      loadProducts({ category: category });
+    }
+
+    // Show feedback
+    showToast(`Showing ${category === 'all' ? 'all products' : category}`, 'info');
+
+    // Scroll to products
+    document.querySelector('.products-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (error) {
+    console.error('Error filtering by category:', error);
+    showToast('Error filtering products', 'error');
   }
 }
 
